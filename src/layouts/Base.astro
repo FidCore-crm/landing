@@ -1,0 +1,53 @@
+---
+export interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'FidCore CRM — El CRM para productores de seguros argentinos',
+  description = 'CRM profesional para PAS con IA para importar pólizas, portal del asegurado y todo lo que tu estudio necesita. Desde $69.800/mes.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- OpenGraph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fidcore.com.ar" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- IBM Plex Sans + Mono (mismas fuentes que el CRM/panel) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-white text-slate-800 antialiased">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+  :focus-visible {
+    outline: 2px solid theme('colors.fidcore.500');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+</style>

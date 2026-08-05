@@ -1,0 +1,140 @@
+---
+// Form de solicitud. Al submit:
+// 1. POST a /api/publico/solicitud del panel.
+// 2. Panel devuelve { lead_id, mp_link }.
+// 3. Redirect al mp_link (Mercado Pago).
+---
+
+<section id="contacto" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <div class="text-2xs font-semibold uppercase tracking-wider text-fidcore-600 mb-3">
+        Empezar ahora
+      </div>
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+        Solicitá tu CRM
+      </h2>
+      <p class="text-lg text-slate-600 mt-4">
+        Completá el formulario y te llevamos al pago de la primera cuota.
+        Dentro de las 48hs tu CRM queda operativo.
+      </p>
+    </div>
+
+    <form id="form-solicitud" class="bg-white border border-slate-200 rounded-lg p-6 lg:p-8 space-y-5 shadow-sm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label for="nombre" class="block text-xs font-medium text-slate-700 mb-1">
+            Nombre completo <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="nombre" name="nombre" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="Juan Pérez"/>
+        </div>
+        <div>
+          <label for="telefono" class="block text-xs font-medium text-slate-700 mb-1">
+            Teléfono <span class="text-red-500">*</span>
+          </label>
+          <input type="tel" id="telefono" name="telefono" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="+54 11 5555 5555"/>
+        </div>
+        <div>
+          <label for="email" class="block text-xs font-medium text-slate-700 mb-1">
+            Email <span class="text-red-500">*</span>
+          </label>
+          <input type="email" id="email" name="email" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="tuemail@ejemplo.com"/>
+        </div>
+        <div>
+          <label for="empresa" class="block text-xs font-medium text-slate-700 mb-1">
+            Razón social o nombre de tu estudio
+          </label>
+          <input type="text" id="empresa" name="empresa" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="Ej. Lobo Seguros"/>
+        </div>
+        <div>
+          <label for="cuit" class="block text-xs font-medium text-slate-700 mb-1">
+            CUIT <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="cuit" name="cuit" required inputmode="numeric" pattern="[0-9\-]{11,13}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none font-mono" placeholder="20-12345678-9"/>
+        </div>
+        <div>
+          <label for="cantidad_polizas" class="block text-xs font-medium text-slate-700 mb-1">
+            Cantidad aprox. de pólizas activas
+          </label>
+          <select id="cantidad_polizas" name="cantidad_polizas" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none bg-white">
+            <option value="">Seleccionar…</option>
+            <option value="0-50">0 a 50</option>
+            <option value="51-200">51 a 200</option>
+            <option value="201-500">201 a 500</option>
+            <option value="501+">Más de 500</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="mensaje" class="block text-xs font-medium text-slate-700 mb-1">
+          Contanos algo (opcional)
+        </label>
+        <textarea id="mensaje" name="mensaje" rows="3" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none resize-none" placeholder="¿De qué CRM venís? ¿Alguna funcionalidad puntual que te interese?"></textarea>
+      </div>
+
+      <!-- Honeypot anti-spam (oculto para humanos) -->
+      <input type="text" name="_website" tabindex="-1" autocomplete="off" class="absolute -left-[9999px]" aria-hidden="true"/>
+
+      <div id="form-error" class="hidden p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700"></div>
+
+      <button type="submit" id="form-submit" class="w-full inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 disabled:bg-slate-400 text-white font-medium px-5 py-3.5 rounded-md transition-colors">
+        <span id="form-submit-label">Ir al pago — $69.800</span>
+        <svg id="form-submit-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </button>
+
+      <p class="text-2xs text-slate-500 text-center">
+        Al enviar aceptás que te contactemos por email/WhatsApp. Tus datos no se comparten.
+      </p>
+    </form>
+  </div>
+</section>
+
+<script>
+  const PANEL_URL = 'https://panel.fidcore.com.ar'
+
+  const form = document.getElementById('form-solicitud') as HTMLFormElement | null
+  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null
+  const submitLabel = document.getElementById('form-submit-label') as HTMLSpanElement | null
+  const errorBox = document.getElementById('form-error') as HTMLDivElement | null
+
+  if (form && submitBtn && submitLabel && errorBox) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      errorBox.classList.add('hidden')
+      submitBtn.disabled = true
+      submitLabel.textContent = 'Procesando…'
+
+      const data = new FormData(form)
+      const payload: Record<string, string> = {}
+      for (const [k, v] of data.entries()) {
+        payload[k] = String(v)
+      }
+
+      try {
+        const res = await fetch(`${PANEL_URL}/api/publico/solicitud`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        const json = await res.json()
+
+        if (json.ok && json.data?.mp_link) {
+          window.location.href = json.data.mp_link
+        } else {
+          errorBox.textContent = json.error || 'Hubo un error. Intentá de nuevo o contactanos por WhatsApp.'
+          errorBox.classList.remove('hidden')
+          submitBtn.disabled = false
+          submitLabel.textContent = 'Ir al pago — $69.800'
+        }
+      } catch (err) {
+        errorBox.textContent = 'No pudimos conectarnos. Verificá tu conexión e intentá de nuevo.'
+        errorBox.classList.remove('hidden')
+        submitBtn.disabled = false
+        submitLabel.textContent = 'Ir al pago — $69.800'
+      }
+    })
+  }
+</script>

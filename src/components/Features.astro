@@ -1,0 +1,75 @@
+---
+const features = [
+  {
+    titulo: 'Clientes y pólizas',
+    descripcion: 'Ficha completa de cada asegurado, todas sus pólizas activas, siniestros, comisiones y pagos en un solo lugar.',
+    icono: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+  },
+  {
+    titulo: 'IA que importa tus PDFs',
+    descripcion: 'Arrastrás el PDF de la póliza y el sistema extrae automáticamente todos los datos: asegurado, vehículo, cobertura, vigencia. Cero carga manual.',
+    icono: 'M13 10V3L4 14h7v7l9-11h-7z',
+  },
+  {
+    titulo: 'Siniestros con auditoría',
+    descripcion: 'Matriz riesgo × tipo, seguimiento por estados, timeline de eventos y auditoría completa de quién hizo qué y cuándo.',
+    icono: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+  },
+  {
+    titulo: 'Renovaciones automáticas',
+    descripcion: 'El sistema te alerta con anticipación qué pólizas vencen. Comparador IA entre la póliza actual y la renovada para detectar cambios.',
+    icono: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
+  },
+  {
+    titulo: 'Portal del asegurado',
+    descripcion: 'Cada cliente tuyo tiene su portal para ver sus pólizas, denunciar siniestros y descargar documentos. Menos consultas al teléfono.',
+    icono: 'M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4',
+  },
+  {
+    titulo: 'Comisiones y facturación',
+    descripcion: 'Cargá tus reglas de comisión por compañía/ramo y el sistema calcula todo automático. Panel de análisis por productor.',
+    icono: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+  },
+  {
+    titulo: 'Backups automáticos',
+    descripcion: 'Backup diario de toda tu base de datos + archivos. Restaurable en 1 click. Tu información nunca se pierde.',
+    icono: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
+  },
+  {
+    titulo: 'Actualizaciones incluidas',
+    descripcion: 'Nuevas features cada semana. Se actualiza solo, sin que tengas que hacer nada. Sin costo extra por versión nueva.',
+    icono: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
+  },
+]
+---
+
+<section id="features" class="py-20 lg:py-28 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <div class="text-2xs font-semibold uppercase tracking-wider text-fidcore-600 mb-3">
+        Todo lo que necesitás
+      </div>
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+        Un CRM pensado para PAS argentinos
+      </h2>
+      <p class="text-lg text-slate-600 mt-4">
+        Sin bloatware, sin funciones que no usás. Solo lo que un estudio de seguros
+        necesita para operar con orden.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {features.map(f => (
+        <div class="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-md hover:border-fidcore-200 transition-all">
+          <div class="w-10 h-10 rounded-md bg-fidcore-50 text-fidcore-600 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={f.icono}/>
+            </svg>
+          </div>
+          <h3 class="font-semibold text-slate-900 mb-1.5">{f.titulo}</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">{f.descripcion}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

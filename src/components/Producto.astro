@@ -1,0 +1,43 @@
+---
+/**
+ * Sección de producto.
+ *
+ * PENDIENTE: acá va la captura real del CRM. Hoy hay un slot marcado porque
+ * el CRM productivo tiene datos de clientes reales que no se pueden publicar,
+ * y todavía no existe un seed de datos demo.
+ *
+ * Cuando el seed exista:
+ *   1. Levantar el CRM con datos demo.
+ *   2. Capturar la vista de renovaciones a 2560x1440.
+ *   3. Guardar en public/producto/renovaciones.png y reemplazar el slot.
+ *
+ * Deliberadamente NO se construye una UI falsa con divs acá.
+ */
+---
+
+<section id="producto" class="seccion">
+  <div class="contenedor">
+    <div class="max-w-3xl">
+      <h2 class="titulo-seccion revelar">
+        Toda tu cartera en una pantalla que se entiende sola.
+      </h2>
+      <p class="bajada mt-5 revelar" style="transition-delay: 80ms">
+        Sin planillas paralelas ni carpetas por cliente. Buscás una patente y tenés la póliza,
+        el asegurado, los siniestros y lo que cobraste.
+      </p>
+    </div>
+
+    <!-- TODO: reemplazar por public/producto/renovaciones.png (captura real, 2560x1440).
+         Mientras no exista, el slot va contenido para no abrir un vacío en la página. -->
+    <div
+      class="revelar mx-auto mt-10 max-w-3xl overflow-hidden rounded-panel border border-dashed border-white/[0.14] bg-navy-850"
+      style="transition-delay: 160ms"
+    >
+      <div class="grid h-[200px] place-items-center px-6">
+        <p class="text-center font-mono text-sm text-slate-500">
+          Captura del CRM pendiente de datos demo
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,236 @@
+@import './fuentes.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * La página se compromete con UN solo mundo visual: oscuro y profundo.
+ * No hay tema claro ni inversión de secciones. La variación entre secciones es
+ * tonal (navy-950 junto a navy-900), nunca un flip a fondo blanco.
+ *
+ * Criterio general: sensación premium por contención, no por cantidad.
+ * El naranja de marca es fuerte pero aparece poco y siempre en el mismo rol.
+ * La profundidad viene de luz en los bordes, sombras tintadas y grano fino,
+ * no de tarjetas apiladas con bordes marcados.
+ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    @apply bg-navy-900 font-sans text-slate-300 antialiased;
+    /* Fuente de luz muy sutil arriba, para que el fondo no sea un plano parejo. */
+    background-image: radial-gradient(120% 60% at 50% -10%, rgba(42, 74, 122, 0.4), transparent 70%);
+    background-repeat: no-repeat;
+  }
+
+  /**
+   * Grano fino sobre toda la página. Es lo que saca el aspecto de "degradado
+   * plano de CSS" y da textura de material impreso. Opacidad muy baja: si se
+   * nota, está mal puesto.
+   */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.038;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  ::selection {
+    @apply bg-naranja-500/25 text-white;
+  }
+
+  :focus-visible {
+    @apply rounded-control outline-none ring-2 ring-naranja-400/55 ring-offset-2 ring-offset-navy-900;
+  }
+
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* ---------- Estructura ---------- */
+
+  .contenedor {
+    @apply mx-auto w-full max-w-contenido px-5 sm:px-7 lg:px-10;
+  }
+
+  /* Más aire que antes: el espacio es la señal más barata de calidad. */
+  .seccion {
+    @apply py-24 lg:py-36;
+  }
+
+  /* ---------- Tipografía ---------- */
+
+  .titulo {
+    @apply font-display font-bold text-white;
+    font-stretch: 112%;
+    text-wrap: balance;
+  }
+
+  .titulo-seccion {
+    @apply titulo text-d-sm sm:text-d-md;
+  }
+
+  /* Texto largo: más grande, más interlineado, más claro. Se lee sin esfuerzo. */
+  .bajada {
+    @apply max-w-lectura text-xl font-light leading-relaxed text-slate-400;
+  }
+
+  /**
+   * Eyebrow racionada a máximo 1 cada 3 secciones. En gris, no en naranja:
+   * el naranja se reserva para lo que tiene que llamar la atención de verdad.
+   */
+  .eyebrow {
+    @apply font-mono text-2xs uppercase tracking-[0.22em] text-slate-500;
+  }
+
+  /* ---------- Controles ---------- */
+
+  /**
+   * El primario es el único elemento naranja lleno de la página. Ese es su
+   * privilegio y por eso funciona.
+   */
+  .btn-primario {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control
+           bg-naranja-500 px-6 py-3.5 text-base font-semibold text-white
+           transition-all duration-300 hover:bg-naranja-400 active:translate-y-px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 12px 30px -10px rgba(255, 106, 0, 0.5);
+  }
+
+  .btn-secundario {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control
+           bg-white/[0.02] px-6 py-3.5 text-base font-medium text-slate-200
+           transition-all duration-300 hover:bg-white/[0.05] hover:text-white active:translate-y-px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  /* ---------- Superficies ---------- */
+
+  /**
+   * Panel: no es "fondo más claro + borde". Es un plano con luz cayendo en el
+   * canto de arriba y sombra profunda tintada de azul debajo. Eso es lo que
+   * hace que se lea como un objeto y no como un rectángulo.
+   */
+  .panel {
+    @apply rounded-panel;
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045) 0%,
+      rgba(255, 255, 255, 0.014) 40%,
+      rgba(255, 255, 255, 0.008) 100%
+    );
+    background-color: rgba(10, 22, 40, 0.5);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      0 28px 56px -28px rgba(3, 8, 18, 0.9);
+  }
+
+  .panel-hover {
+    @apply panel transition-all duration-500;
+  }
+
+  .panel-hover:hover {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.13),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 32px 64px -28px rgba(3, 8, 18, 0.95);
+  }
+
+  /* ---------- Formulario ---------- */
+
+  .campo {
+    @apply w-full rounded-control bg-navy-950/70 px-4 py-3 text-base text-white
+           placeholder:text-slate-500 transition-all duration-300 focus:outline-none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .campo:focus {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 106, 0, 0.65),
+      0 0 0 3px rgba(255, 106, 0, 0.14);
+  }
+
+  .campo-label {
+    @apply mb-2 block text-sm font-medium text-slate-300;
+  }
+}
+
+@layer utilities {
+  .ancho-100 {
+    font-stretch: 100%;
+  }
+  .ancho-112 {
+    font-stretch: 112%;
+  }
+
+  /**
+   * Filete que se desvanece en las puntas. Una línea de opacidad uniforme
+   * corta el espacio; esta lo organiza sin ensuciarlo.
+   */
+  .filete {
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.11) 22%,
+      rgba(255, 255, 255, 0.11) 78%,
+      transparent 100%
+    );
+  }
+
+  /* Grano local, para superficies que necesitan textura propia. */
+  .grano {
+    position: relative;
+  }
+
+  .grano::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .revelar {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .revelar.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .revelar,
+    .revelar.visible {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}

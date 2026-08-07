@@ -1,0 +1,63 @@
+---
+import { Icon } from 'astro-icon/components'
+
+/**
+ * Acordeón nativo con details/summary: accesible por teclado y funciona sin JS.
+ * Son las objeciones reales que pone un PAS antes de pagar, no relleno.
+ */
+
+const preguntas = [
+  {
+    p: '¿Dónde quedan mis datos?',
+    r: 'En un servidor dedicado para tu estudio, no compartido con otros productores. Se hace un backup completo todos los días. Si te das de baja, te entregamos un respaldo con toda tu información.',
+  },
+  {
+    p: '¿Me pasan la cartera que ya tengo cargada?',
+    r: 'Sí, y sin cargo. Nos mandás tus planillas de Excel o las pólizas en PDF y las subimos nosotros antes de que empieces a usarlo. No tenés que cargar nada a mano para arrancar.',
+  },
+  {
+    p: '¿Estoy obligado a usar la inteligencia artificial?',
+    r: 'No. Todo lo que la IA hace se puede hacer a mano, y el formulario de carga manual está siempre disponible. La IA te ahorra tipeo, no te cambia la forma de trabajar.',
+  },
+  {
+    p: '¿Necesito instalar algo en mi computadora?',
+    r: 'No. Entrás desde el navegador, igual que a un homebanking. Funciona en la computadora del estudio y en el celular.',
+  },
+  {
+    p: '¿Puedo darle acceso a alguien de mi equipo?',
+    r: 'Sí. Creás usuarios con distintos permisos, así un empleado ve lo que necesita para trabajar y no toda la información del estudio.',
+  },
+  {
+    p: '¿Cuánto tarda en estar andando?',
+    r: 'Dentro de las 48 horas de que pagás la primera cuota lo tenés operativo, con tu logo y las compañías con las que trabajás ya configuradas.',
+  },
+]
+---
+
+<section id="preguntas" class="seccion">
+  <div class="contenedor">
+    <h2 class="titulo-seccion max-w-2xl revelar">Lo que te vas a preguntar.</h2>
+
+    <div class="mt-10 grid gap-x-12 gap-y-2 lg:grid-cols-2">
+      {
+        preguntas.map((item, i) => (
+          <details
+            class="revelar group border-b border-white/[0.08] py-4"
+            style={`transition-delay: ${i * 50}ms`}
+          >
+            <summary
+              class="flex cursor-pointer list-none items-start justify-between gap-4 rounded-control text-lg font-medium text-white marker:content-none"
+            >
+              {item.p}
+              <Icon
+                name="ph:plus-bold"
+                class="mt-1 h-4 w-4 shrink-0 text-naranja-500 transition-transform duration-300 group-open:rotate-45"
+              />
+            </summary>
+            <p class="mt-3 max-w-lectura text-base text-slate-400">{item.r}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

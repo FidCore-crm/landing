@@ -1,43 +1,60 @@
 ---
-const year = new Date().getFullYear()
+import { EMAIL_CONTACTO, WHATSAPP_LINK } from '../config'
+
+const anio = new Date().getFullYear()
+
+const secciones = [
+  {
+    titulo: 'Producto',
+    enlaces: [
+      { href: '#producto', texto: 'Qué hace' },
+      { href: '#precio', texto: 'Precio' },
+      { href: '#preguntas', texto: 'Preguntas' },
+    ],
+  },
+  {
+    titulo: 'Contacto',
+    enlaces: [
+      { href: `mailto:${EMAIL_CONTACTO}`, texto: EMAIL_CONTACTO },
+      ...(WHATSAPP_LINK ? [{ href: WHATSAPP_LINK, texto: 'WhatsApp' }] : []),
+      { href: '#solicitar', texto: 'Empezar ahora' },
+    ],
+  },
+]
 ---
 
-<footer class="bg-navy-900 text-white/70">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<footer class="border-t border-white/[0.08] bg-navy-900">
+  <div class="contenedor py-14">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
       <div>
-        <div class="flex items-center gap-2 mb-4">
-          <div class="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center">
-            <span class="text-white font-bold text-sm">F</span>
-          </div>
-          <span class="font-semibold text-white tracking-tight">FidCore CRM</span>
-        </div>
-        <p class="text-sm leading-relaxed">
-          El CRM que tu estudio de seguros merece. Hecho por y para PAS argentinos.
+        <img src="/branding/fidcore-logo.svg" alt="FidCore" width="113" height="30" class="h-[30px] w-auto" />
+        <p class="mt-4 max-w-xs text-sm text-slate-400">
+          Sistema de gestión para Productores Asesores de Seguros. Hecho en Argentina.
         </p>
       </div>
 
-      <div>
-        <div class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Producto</div>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#features" class="hover:text-white">Funcionalidades</a></li>
-          <li><a href="#precio" class="hover:text-white">Precio</a></li>
-          <li><a href="#contacto" class="hover:text-white">Empezar</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Contacto</div>
-        <ul class="space-y-2 text-sm">
-          <li><a href="mailto:contacto@fidcore.com.ar" class="hover:text-white">contacto@fidcore.com.ar</a></li>
-          <li><a href="#contacto" class="hover:text-white">Formulario de solicitud</a></li>
-        </ul>
-      </div>
+      {
+        secciones.map((seccion) => (
+          <nav aria-label={seccion.titulo}>
+            <p class="font-mono text-2xs uppercase tracking-[0.14em] text-slate-500">
+              {seccion.titulo}
+            </p>
+            <ul class="mt-4 grid gap-2.5">
+              {seccion.enlaces.map((e) => (
+                <li>
+                  <a href={e.href} class="text-sm text-slate-400 transition-colors hover:text-white">
+                    {e.texto}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
     </div>
 
-    <div class="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-2xs">© {year} FidCore CRM. Todos los derechos reservados.</p>
-      <p class="text-2xs">Argentina</p>
+    <div class="mt-12 border-t border-white/[0.06] pt-6">
+      <p class="text-2xs text-slate-500">© {anio} FidCore. Todos los derechos reservados.</p>
     </div>
   </div>
 </footer>

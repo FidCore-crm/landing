@@ -1,53 +1,111 @@
 ---
+import '../styles/global.css'
+import { PRECIO_TEXTO } from '../config'
+
 export interface Props {
   title?: string
   description?: string
+  /** Las páginas secundarias (gracias, privacidad) no deben indexarse. */
+  noindex?: boolean
 }
 
 const {
-  title = 'FidCore CRM — El CRM para productores de seguros argentinos',
-  description = 'CRM profesional para PAS con IA para importar pólizas, portal del asegurado y todo lo que tu estudio necesita. Desde $69.800/mes.',
+  title = 'FidCore CRM, el CRM para productores de seguros argentinos',
+  description = `Clientes, pólizas, siniestros, renovaciones y comisiones en un solo lugar. La IA lee el PDF de la póliza y carga los datos sola. Desde ${PRECIO_TEXTO} por mes.`,
+  noindex = false,
 } = Astro.props
+
+const canonica = new URL(Astro.url.pathname, Astro.site ?? 'https://fidcore.com.ar')
+const ogImagen = new URL('/og.png', Astro.site ?? 'https://fidcore.com.ar')
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es-AR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0A1628" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonica.href} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
-    <!-- OpenGraph -->
+    <!--
+      Fuentes self-hosteadas: sin dependencia de Google Fonts en producción.
+      Precargamos solo las dos que entran en el primer pintado, para no
+      pelearle ancho de banda al resto.
+    -->
+    <link
+      rel="preload"
+      href="/fonts/archivo-400_900-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- OpenGraph y Twitter: el canal real de distribución es WhatsApp. -->
+    <meta property="og:site_name" content="FidCore CRM" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://fidcore.com.ar" />
+    <meta property="og:url" content={canonica.href} />
     <meta property="og:locale" content="es_AR" />
-
-    <!-- IBM Plex Sans + Mono (mismas fuentes que el CRM/panel) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <meta property="og:image" content={ogImagen.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FidCore CRM, el CRM para productores de seguros argentinos" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImagen.href} />
   </head>
-  <body class="bg-white text-slate-800 antialiased">
+
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-naranja-500 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Saltar al contenido
+    </a>
     <slot />
+
+    <script>
+      // Revelado al entrar en viewport. Justificación: jerarquía, el contenido
+      // aparece en el orden en que se lee. Sin JS o con reduced-motion queda
+      // visible sin animar (el CSS lo cubre).
+      const objetivos = document.querySelectorAll('.revelar')
+
+      // Compuerta de desarrollo: con ?estatico en la URL todo aparece revelado
+      // de entrada. Sirve para revisar el diseño en capturas, donde el contenido
+      // que nunca entra en viewport quedaría invisible. En producción nadie
+      // navega con este parámetro.
+      if (new URLSearchParams(location.search).has('estatico')) {
+        objetivos.forEach((o) => o.classList.add('visible'))
+      } else if (objetivos.length > 0 && 'IntersectionObserver' in window) {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue
+              entrada.target.classList.add('visible')
+              observador.unobserve(entrada.target)
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -60px 0px' },
+        )
+        objetivos.forEach((o) => observador.observe(o))
+      } else {
+        objetivos.forEach((o) => o.classList.add('visible'))
+      }
+    </script>
   </body>
 </html>
-
-<style is:global>
-  html {
-    scroll-behavior: smooth;
-  }
-  :focus-visible {
-    outline: 2px solid theme('colors.fidcore.500');
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-</style>

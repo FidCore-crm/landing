@@ -1,0 +1,51 @@
+---
+/**
+ * Secuencia real de alta. Va numerada porque el orden importa de verdad: cada
+ * paso depende del anterior. Los títulos son el verbo de lo que pasa, no
+ * etiquetas tipo "Paso 1".
+ */
+
+const pasos = [
+  {
+    titulo: 'Completás el formulario',
+    texto: 'Los datos del estudio y tu CUIT. Dos minutos.',
+  },
+  {
+    titulo: 'Pagás la primera cuota',
+    texto: 'Por Mercado Pago, con débito automático mensual. Sin permanencia.',
+  },
+  {
+    titulo: 'Te lo dejamos operativo',
+    texto: 'Dentro de las 48 horas, con tu logo y las compañías con las que trabajás ya cargadas.',
+  },
+  {
+    titulo: 'Migramos tu cartera',
+    texto: 'Sin cargo. Nos pasás tus planillas o tus pólizas en PDF y las subimos nosotros.',
+  },
+]
+---
+
+<section class="seccion">
+  <div class="contenedor">
+    <h2 class="titulo-seccion max-w-2xl revelar">De la decisión a operar, en dos días.</h2>
+
+    <ol class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+      {
+        pasos.map((paso, i) => (
+          <li class="revelar relative" style={`transition-delay: ${i * 70}ms`}>
+            <!-- Hairline que conecta los pasos, solo en desktop. Organiza
+                 contenido real (la secuencia), no es decoración. -->
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-sm font-medium text-naranja-500">{i + 1}</span>
+              <span class="h-px flex-1 bg-white/10" aria-hidden="true"></span>
+            </div>
+            <h3 class="mt-4 font-display text-xl font-semibold text-white ancho-100">
+              {paso.titulo}
+            </h3>
+            <p class="mt-2 text-sm text-slate-400">{paso.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

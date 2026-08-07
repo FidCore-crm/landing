@@ -1,29 +1,95 @@
 ---
-// Nav simple, sticky, con CTA prominente.
+import { Icon } from 'astro-icon/components'
+
+const enlaces = [
+  { href: '#producto', texto: 'Producto' },
+  { href: '#precio', texto: 'Precio' },
+  { href: '#preguntas', texto: 'Preguntas' },
+]
 ---
 
-<nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-14">
-      <a href="/" class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-md bg-navy-900 flex items-center justify-center">
-          <span class="text-white font-bold text-sm">F</span>
-        </div>
-        <span class="font-semibold text-slate-900 tracking-tight">FidCore CRM</span>
+<header class="sticky top-0 z-40 border-b border-white/[0.07] bg-navy-900/85 backdrop-blur-md">
+  <div class="contenedor">
+    <nav class="flex h-[68px] items-center justify-between gap-6" aria-label="Principal">
+      <a href="/" class="flex shrink-0 items-center" aria-label="FidCore CRM, inicio">
+        <img src="/branding/fidcore-logo.svg" alt="FidCore" width="98" height="26" class="h-[26px] w-auto" />
       </a>
 
-      <div class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#features" class="text-slate-600 hover:text-slate-900">Funcionalidades</a>
-        <a href="#precio" class="text-slate-600 hover:text-slate-900">Precio</a>
-        <a href="#contacto" class="text-slate-600 hover:text-slate-900">Contacto</a>
+      <div class="hidden items-center gap-8 md:flex">
+        {
+          enlaces.map((e) => (
+            <a href={e.href} class="text-base text-slate-400 transition-colors hover:text-white">
+              {e.texto}
+            </a>
+          ))
+        }
       </div>
 
-      <a
-        href="#contacto"
-        class="inline-flex items-center gap-1.5 bg-navy-900 hover:bg-navy-800 text-white text-sm font-medium px-3.5 py-1.5 rounded-md transition-colors"
-      >
-        Empezar ahora
-      </a>
+      <div class="flex items-center gap-2">
+        <!-- De contorno a propósito: el único naranja lleno de la primera
+             pantalla es el CTA del hero. Dos botones naranjas compiten. -->
+        <a href="#solicitar" class="hidden btn-secundario !px-4 !py-2 !text-sm sm:inline-flex">
+          Empezar ahora
+        </a>
+
+        <button
+          type="button"
+          id="menu-boton"
+          class="grid h-9 w-9 place-items-center rounded-control border border-white/15 text-slate-300 md:hidden"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="menu-movil"
+        >
+          <Icon name="ph:list-bold" class="h-5 w-5" />
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Menú móvil: la versión anterior escondía los links en celular y no los reponía. -->
+  <div id="menu-movil" class="hidden border-t border-white/[0.07] bg-navy-900 md:hidden">
+    <div class="contenedor flex flex-col gap-1 py-3">
+      {
+        enlaces.map((e) => (
+          <a
+            href={e.href}
+            data-cerrar-menu
+            class="rounded-control px-2 py-2.5 text-lg text-slate-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+          >
+            {e.texto}
+          </a>
+        ))
+      }
+      <a href="#solicitar" data-cerrar-menu class="btn-primario mt-2">Empezar ahora</a>
     </div>
   </div>
-</nav>
+</header>
+
+<script>
+  const boton = document.getElementById('menu-boton')
+  const panel = document.getElementById('menu-movil')
+
+  if (boton && panel) {
+    const alternar = (abrir: boolean) => {
+      panel.classList.toggle('hidden', !abrir)
+      boton.setAttribute('aria-expanded', String(abrir))
+      boton.setAttribute('aria-label', abrir ? 'Cerrar menú' : 'Abrir menú')
+    }
+
+    boton.addEventListener('click', () => {
+      alternar(panel.classList.contains('hidden'))
+    })
+
+    // Al elegir un destino el menú se cierra, sino tapa la sección.
+    panel.querySelectorAll('[data-cerrar-menu]').forEach((enlace) => {
+      enlace.addEventListener('click', () => alternar(false))
+    })
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape' && !panel.classList.contains('hidden')) {
+        alternar(false)
+        boton.focus()
+      }
+    })
+  }
+</script>

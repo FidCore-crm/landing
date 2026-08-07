@@ -1,75 +1,130 @@
 ---
-const features = [
+import { Icon } from 'astro-icon/components'
+
+/**
+ * Bento asimétrico: 5 celdas para 5 features, sin celdas vacías.
+ * La celda grande es el importador IA porque es el diferencial real.
+ *
+ * Las features de infraestructura (backups, actualizaciones, soporte) no están
+ * acá: viven en la lista de lo que incluye el precio, que es donde el PAS las
+ * busca.
+ */
+
+const secundarias = [
   {
-    titulo: 'Clientes y pólizas',
-    descripcion: 'Ficha completa de cada asegurado, todas sus pólizas activas, siniestros, comisiones y pagos en un solo lugar.',
-    icono: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+    icono: 'ph:bell-ringing',
+    titulo: 'Renovaciones que te avisan',
+    texto:
+      'El sistema te marca qué vence y cuándo. La renovada se vincula con la anterior, así no perdés el historial.',
   },
   {
-    titulo: 'IA que importa tus PDFs',
-    descripcion: 'Arrastrás el PDF de la póliza y el sistema extrae automáticamente todos los datos: asegurado, vehículo, cobertura, vigencia. Cero carga manual.',
-    icono: 'M13 10V3L4 14h7v7l9-11h-7z',
+    icono: 'ph:warning-octagon',
+    titulo: 'Siniestros con seguimiento',
+    texto:
+      'Cada caso con su número interno, sus estados y el registro de quién hizo qué. Si el asegurado llama, sabés dónde está parado.',
   },
   {
-    titulo: 'Siniestros con auditoría',
-    descripcion: 'Matriz riesgo × tipo, seguimiento por estados, timeline de eventos y auditoría completa de quién hizo qué y cuándo.',
-    icono: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
-  },
-  {
-    titulo: 'Renovaciones automáticas',
-    descripcion: 'El sistema te alerta con anticipación qué pólizas vencen. Comparador IA entre la póliza actual y la renovada para detectar cambios.',
-    icono: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
-  },
-  {
+    icono: 'ph:user-circle',
     titulo: 'Portal del asegurado',
-    descripcion: 'Cada cliente tuyo tiene su portal para ver sus pólizas, denunciar siniestros y descargar documentos. Menos consultas al teléfono.',
-    icono: 'M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4',
+    texto:
+      'Tu cliente entra, ve sus pólizas, descarga los documentos y denuncia un siniestro. Menos llamadas para pedirte lo mismo.',
   },
   {
-    titulo: 'Comisiones y facturación',
-    descripcion: 'Cargá tus reglas de comisión por compañía/ramo y el sistema calcula todo automático. Panel de análisis por productor.',
-    icono: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+    icono: 'ph:percent',
+    titulo: 'Comisiones calculadas',
+    texto:
+      'Cargás tus reglas por compañía y ramo una vez. Después el sistema calcula y vos controlás lo que te liquidaron.',
   },
-  {
-    titulo: 'Backups automáticos',
-    descripcion: 'Backup diario de toda tu base de datos + archivos. Restaurable en 1 click. Tu información nunca se pierde.',
-    icono: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
-  },
-  {
-    titulo: 'Actualizaciones incluidas',
-    descripcion: 'Nuevas features cada semana. Se actualiza solo, sin que tengas que hacer nada. Sin costo extra por versión nueva.',
-    icono: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
-  },
+]
+
+/**
+ * Campos reales que extrae el agente, tomados de `DatosExtraidosPoliza` en
+ * src/lib/agente-pdf/types.ts del CRM. NO agregar campos sin verificarlos ahí.
+ * En una versión anterior decía "Prima", que el sistema no extrae: extrae suma
+ * asegurada, que es otra cosa.
+ */
+const camposExtraidos = [
+  'Asegurado',
+  'Tomador',
+  'DNI o CUIT',
+  'Domicilio',
+  'Compañía',
+  'Ramo',
+  'Cobertura',
+  'Número de póliza',
+  'Vigencia',
+  'Moneda',
+  'Suma asegurada',
+  'Medio de pago',
+  'Refacturación',
+  'Datos del riesgo',
 ]
 ---
 
-<section id="features" class="py-20 lg:py-28 bg-white">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-2xl mx-auto mb-16">
-      <div class="text-2xs font-semibold uppercase tracking-wider text-fidcore-600 mb-3">
-        Todo lo que necesitás
-      </div>
-      <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-        Un CRM pensado para PAS argentinos
-      </h2>
-      <p class="text-lg text-slate-600 mt-4">
-        Sin bloatware, sin funciones que no usás. Solo lo que un estudio de seguros
-        necesita para operar con orden.
-      </p>
-    </div>
+<section class="seccion">
+  <div class="contenedor">
+    <h2 class="titulo-seccion max-w-3xl revelar">Lo que hace, dicho sin vueltas.</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {features.map(f => (
-        <div class="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-md hover:border-fidcore-200 transition-all">
-          <div class="w-10 h-10 rounded-md bg-fidcore-50 text-fidcore-600 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={f.icono}/>
-            </svg>
-          </div>
-          <h3 class="font-semibold text-slate-900 mb-1.5">{f.titulo}</h3>
-          <p class="text-sm text-slate-600 leading-relaxed">{f.descripcion}</p>
+    <!--
+      Bento de 5 celdas para 5 features, sin celdas vacías.
+      La celda de IA ocupa 4 columnas y 2 filas: es la más importante y así
+      tiene lugar para los chips sin quedar estirada con espacio muerto.
+      Después el ritmo cambia a dos celdas de 3 columnas.
+    -->
+    <div class="mt-12 grid gap-4 lg:grid-cols-6">
+      <!-- Celda grande: el diferencial. Fondo con gradiente de marca. -->
+      <article
+        class="grano revelar relative overflow-hidden rounded-panel p-7 lg:col-span-4 lg:row-span-2 lg:p-9"
+        style="background-image: radial-gradient(130% 120% at 8% 0%, rgba(42,74,122,0.75) 0%, rgba(18,35,65,0.9) 45%, rgba(10,22,40,0.85) 100%);
+               box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,140,60,0.28), 0 34px 68px -30px rgba(3,8,18,0.95)"
+      >
+        <div class="relative">
+          <Icon name="ph:file-arrow-up" class="h-8 w-8 text-naranja-500" />
+          <h3 class="titulo mt-5 text-d-sm">Arrastrás el PDF. Ya está cargada.</h3>
+          <p class="mt-4 max-w-lectura text-base text-slate-300">
+            La IA lee la póliza y completa el formulario. Vos revisás y confirmás. Si el PDF viene
+            mal escaneado o preferís no usar IA, cargás a mano como siempre.
+          </p>
+
+          <p class="mt-7 font-mono text-2xs uppercase tracking-[0.14em] text-slate-500">
+            Datos que reconoce
+          </p>
+          <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-2">
+            {
+              camposExtraidos.map((campo) => (
+                <li class="rounded-pill border border-white/10 bg-navy-950/50 px-2.5 py-1 font-mono text-2xs text-slate-300">
+                  {campo}
+                </li>
+              ))
+            }
+          </ul>
         </div>
-      ))}
+      </article>
+
+      <!--
+        Las dos primeras van al lado de la celda grande (2 columnas cada una),
+        las dos últimas abajo y más anchas (3 columnas). El cambio de ancho es
+        lo que le da ritmo a la grilla en vez de repetir tarjetas iguales.
+      -->
+      {
+        secundarias.map((f, i) => (
+          <article
+            class:list={[
+              'panel-hover revelar p-6',
+              i < 2 ? 'lg:col-span-2' : 'lg:col-span-3',
+            ]}
+            style={`transition-delay: ${80 + i * 60}ms`}
+          >
+            <div class="flex items-start gap-3.5">
+              <Icon name={f.icono} class="mt-0.5 h-5 w-5 shrink-0 text-naranja-500" />
+              <div>
+                <h3 class="font-display text-lg font-semibold text-white ancho-100">{f.titulo}</h3>
+                <p class="mt-1.5 text-sm text-slate-400">{f.texto}</p>
+              </div>
+            </div>
+          </article>
+        ))
+      }
     </div>
   </div>
 </section>

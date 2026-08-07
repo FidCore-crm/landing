@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro'
+import { Icon } from 'astro-icon/components'
+import { CONTACTO_FALLBACK } from '../config'
+
+/**
+ * Destino del back_url del preapproval de Mercado Pago.
+ * El panel manda a https://fidcore.com.ar/gracias despues del pago, así que
+ * esta ruta NO se puede renombrar sin cambiar también
+ * src/app/api/publico/solicitud/route.ts en el panel.
+ */
+
+const queSigue = [
+  'Te llega un email confirmando la suscripción.',
+  'Preparamos tu sistema con tu logo y las compañías con las que trabajás.',
+  'Te escribimos para coordinar el traspaso de tu cartera actual.',
+  'Dentro de 48 horas lo tenés operativo, con tus datos adentro.',
+]
+---
+
+<Base
+  title="Listo, ya está en marcha | FidCore CRM"
+  description="Recibimos tu suscripción a FidCore CRM."
+  noindex={true}
+>
+  <main
+    id="contenido"
+    class="grid min-h-[100dvh] place-items-center py-16"
+    style="background: linear-gradient(150deg, #0A1628 0%, #1E3A5F 70%, #2A4A7A 100%)"
+  >
+    <div class="contenedor">
+      <div class="mx-auto max-w-xl text-center">
+        <a href="/" aria-label="FidCore CRM, inicio">
+          <img
+            src="/branding/fidcore-logo.svg"
+            alt="FidCore"
+            width="128"
+            height="34"
+            class="mx-auto h-[34px] w-auto"
+          />
+        </a>
+
+        <div class="mt-10 grid place-items-center">
+          <span class="grid h-14 w-14 place-items-center rounded-pill bg-naranja-500">
+            <Icon name="ph:check-bold" class="h-7 w-7 text-white" />
+          </span>
+        </div>
+
+        <h1 class="titulo mt-7 text-d-sm sm:text-d-md">Listo, ya está en marcha.</h1>
+        <p class="bajada mx-auto mt-5 text-center">
+          Recibimos tu suscripción. Ahora nos ponemos a preparar tu sistema.
+        </p>
+      </div>
+
+      <ol class="panel mx-auto mt-10 max-w-xl divide-y divide-white/[0.07]">
+        {
+          queSigue.map((paso, i) => (
+            <li class="flex items-start gap-3.5 px-5 py-4 sm:px-6">
+              <span class="mt-0.5 font-mono text-sm font-medium text-naranja-500">{i + 1}</span>
+              <span class="text-base text-slate-300">{paso}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="mx-auto mt-8 max-w-xl text-center text-sm text-slate-400">
+        Si algo no te cierra o querés adelantar el traspaso de tu cartera,
+        <a
+          href={CONTACTO_FALLBACK.href}
+          class="text-naranja-400 underline underline-offset-4 hover:text-naranja-300"
+          >{CONTACTO_FALLBACK.label.toLowerCase()}</a
+        >.
+      </p>
+    </div>
+  </main>
+</Base>

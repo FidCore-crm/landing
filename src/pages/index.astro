@@ -2,18 +2,41 @@
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Hero from '../components/Hero.astro'
+import Producto from '../components/Producto.astro'
 import Features from '../components/Features.astro'
+import Proceso from '../components/Proceso.astro'
 import Precio from '../components/Precio.astro'
+import Preguntas from '../components/Preguntas.astro'
 import FormContacto from '../components/FormContacto.astro'
 import Footer from '../components/Footer.astro'
+
+/**
+ * Las secciones ya no son bandas de color alternadas: comparten el mismo fondo
+ * continuo y se separan con un filete que se desvanece en las puntas. Leer una
+ * página como un espacio único, en vez de como bloques apilados, es la mitad de
+ * la sensación premium.
+ */
 ---
 
 <Base>
   <Nav />
-  <main>
+  <main id="contenido">
     <Hero />
+    <Producto />
+
+    <div class="contenedor"><div class="filete"></div></div>
     <Features />
+
+    <div class="contenedor"><div class="filete"></div></div>
+    <Proceso />
+
+    <div class="contenedor"><div class="filete"></div></div>
     <Precio />
+
+    <div class="contenedor"><div class="filete"></div></div>
+    <Preguntas />
+
+    <div class="contenedor"><div class="filete"></div></div>
     <FormContacto />
   </main>
   <Footer />

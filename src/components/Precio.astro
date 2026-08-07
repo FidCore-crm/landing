@@ -1,69 +1,72 @@
 ---
+import { Icon } from 'astro-icon/components'
+import { PRECIO_TEXTO } from '../config'
+
 const incluye = [
-  'Clientes ilimitados',
-  'Pólizas ilimitadas',
-  'Siniestros con auditoría',
-  'Importador IA de pólizas PDF',
-  'Comparador IA de renovaciones',
+  'Clientes y pólizas sin límite',
+  'Importador de pólizas con IA',
+  'Comparador de renovaciones',
+  'Siniestros con seguimiento y auditoría',
   'Portal del asegurado',
-  'Backups automáticos diarios',
-  'Actualizaciones incluidas',
-  'Soporte por WhatsApp',
-  'Sin permanencia — cancelás cuando quieras',
+  'Cálculo de comisiones',
+  'Backup diario de todo',
+  'Actualizaciones y features nuevas',
+  'Soporte directo, te atiendo yo',
+  'Migración de tu cartera actual',
 ]
 ---
 
-<section id="precio" class="py-20 lg:py-28 bg-slate-50">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <div class="text-2xs font-semibold uppercase tracking-wider text-fidcore-600 mb-3">
-        Precio
-      </div>
-      <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-        Un solo plan. Todo incluido.
+<section id="precio" class="seccion">
+  <div class="contenedor">
+    <div class="max-w-2xl">
+      <p class="eyebrow revelar">Precio</p>
+      <h2 class="titulo-seccion mt-4 revelar" style="transition-delay: 60ms">
+        Un solo plan, con todo adentro.
       </h2>
-      <p class="text-lg text-slate-600 mt-4">
-        Sin sorpresas ni features escondidas detrás de otro plan más caro.
+      <p class="bajada mt-5 revelar" style="transition-delay: 120ms">
+        No hay una versión recortada ni features escondidas detrás de un plan más caro.
       </p>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
-      <div class="bg-gradient-to-br from-navy-900 to-navy-800 p-8 text-center">
-        <div class="text-white/70 text-sm font-medium uppercase tracking-wider">Plan único</div>
-        <div class="mt-3 flex items-baseline justify-center gap-1">
-          <span class="text-5xl lg:text-6xl font-bold text-white font-mono">$69.800</span>
-          <span class="text-white/70 text-lg">/mes</span>
-        </div>
-        <div class="text-white/60 text-sm mt-2">ARS · IVA incluido</div>
+    <div
+      class="panel revelar mt-14 grid overflow-hidden lg:grid-cols-[minmax(0,400px)_1fr]"
+      style="transition-delay: 180ms"
+    >
+      <!-- Precio -->
+      <div
+        class="grano relative p-8 lg:p-11"
+        style="background-image: radial-gradient(120% 130% at 0% 0%, rgba(42,74,122,0.6) 0%, rgba(18,35,65,0.5) 50%, rgba(10,22,40,0) 100%)"
+      >
+        <p class="font-mono text-2xs uppercase tracking-[0.14em] text-slate-400">Plan único</p>
+        <p class="mt-4 flex items-baseline gap-2">
+          <span class="font-mono text-[46px] font-semibold leading-none text-white">{PRECIO_TEXTO}</span>
+          <span class="text-lg text-slate-400">por mes</span>
+        </p>
+        <p class="mt-2.5 text-sm text-slate-400">En pesos, IVA incluido.</p>
+
+        <a href="#solicitar" class="btn-primario mt-8 w-full">
+          Empezar ahora
+          <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
+        </a>
+
+        <p class="mt-4 text-sm text-slate-400">
+          Cancelás cuando quieras, sin plazo mínimo y sin costo de baja.
+        </p>
       </div>
 
-      <div class="p-8">
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {incluye.map(item => (
-            <li class="flex items-start gap-2.5">
-              <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span class="text-sm text-slate-700">{item}</span>
-            </li>
-          ))}
+      <!-- Lo que incluye, en dos columnas para no ser una lista larga y plana -->
+      <div class="relative p-8 lg:p-11" style="box-shadow: inset 1px 0 0 rgba(255,255,255,0.07)">
+        <p class="font-mono text-2xs uppercase tracking-[0.14em] text-slate-400">Incluye</p>
+        <ul class="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+          {
+            incluye.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <Icon name="ph:check-bold" class="mt-1 h-3.5 w-3.5 shrink-0 text-naranja-500" />
+                <span class="text-base text-slate-300">{item}</span>
+              </li>
+            ))
+          }
         </ul>
-
-        <div class="mt-8 pt-6 border-t border-slate-100">
-          <a
-            href="#contacto"
-            class="w-full inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white font-medium px-5 py-3.5 rounded-md transition-colors"
-          >
-            Empezar ahora
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-          </a>
-          <p class="text-2xs text-slate-500 text-center mt-3">
-            Al hacer clic te dirigimos a Mercado Pago para la primera cuota.
-            El CRM queda operativo dentro de las 48hs siguientes.
-          </p>
-        </div>
       </div>
     </div>
   </div>

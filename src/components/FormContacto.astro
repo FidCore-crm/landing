@@ -1,139 +1,201 @@
 ---
-// Form de solicitud. Al submit:
-// 1. POST a /api/publico/solicitud del panel.
-// 2. Panel devuelve { lead_id, mp_link }.
-// 3. Redirect al mp_link (Mercado Pago).
+import { Icon } from 'astro-icon/components'
+import { PANEL_URL, PRECIO_TEXTO, CONTACTO_FALLBACK } from '../config'
+
+/**
+ * Form de solicitud. Al enviar:
+ *   1. POST a /api/publico/solicitud del panel.
+ *   2. El panel guarda el lead y crea el preapproval de Mercado Pago.
+ *   3. Redirige al link de pago.
+ *
+ * Si Mercado Pago falla, el panel devuelve 503 con el lead ya guardado. En ese
+ * caso mostramos el canal de contacto directo, porque el interesado no tiene
+ * que quedarse sin salida.
+ */
 ---
 
-<section id="contacto" class="py-20 lg:py-28 bg-white">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10">
-      <div class="text-2xs font-semibold uppercase tracking-wider text-fidcore-600 mb-3">
-        Empezar ahora
+<section id="solicitar" class="seccion">
+  <div class="contenedor">
+    <div class="grid gap-12 lg:grid-cols-[1fr_minmax(0,600px)] lg:items-start lg:gap-16">
+      <div class="lg:sticky lg:top-28">
+        <h2 class="titulo-seccion revelar">Empezá ahora.</h2>
+        <p class="bajada mt-5 revelar" style="transition-delay: 60ms">
+          Completás estos datos, pagás la primera cuota y dentro de 48 horas lo tenés funcionando
+          con tu cartera adentro.
+        </p>
+        <p class="revelar mt-8 text-sm text-slate-400" style="transition-delay: 120ms">
+          ¿Preferís preguntar antes?
+          <a href={CONTACTO_FALLBACK.href} class="text-naranja-400 underline underline-offset-4 hover:text-naranja-300">
+            {CONTACTO_FALLBACK.label}
+          </a>
+        </p>
       </div>
-      <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-        Solicitá tu CRM
-      </h2>
-      <p class="text-lg text-slate-600 mt-4">
-        Completá el formulario y te llevamos al pago de la primera cuota.
-        Dentro de las 48hs tu CRM queda operativo.
-      </p>
+
+      <form id="form-solicitud" class="panel revelar p-6 lg:p-8" style="transition-delay: 100ms" novalidate>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="nombre" class="campo-label">Nombre y apellido</label>
+            <input type="text" id="nombre" name="nombre" required autocomplete="name" class="campo" placeholder="Martín Etcheverry" />
+          </div>
+          <div>
+            <label for="telefono" class="campo-label">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" required autocomplete="tel" class="campo" placeholder="11 4728 5510" />
+          </div>
+          <div>
+            <label for="email" class="campo-label">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email" class="campo" placeholder="martin@tuestudio.com.ar" />
+          </div>
+          <div>
+            <label for="cuit" class="campo-label">CUIT</label>
+            <input
+              type="text"
+              id="cuit"
+              name="cuit"
+              required
+              inputmode="numeric"
+              class="campo font-mono"
+              placeholder="20 12345678 9"
+            />
+          </div>
+          <div>
+            <label for="empresa" class="campo-label">
+              Nombre del estudio <span class="font-normal text-slate-500">(opcional)</span>
+            </label>
+            <input type="text" id="empresa" name="empresa" autocomplete="organization" class="campo" placeholder="Lobo Seguros" />
+          </div>
+          <div>
+            <label for="cantidad_polizas" class="campo-label">
+              Pólizas activas <span class="font-normal text-slate-500">(aproximado)</span>
+            </label>
+            <select id="cantidad_polizas" name="cantidad_polizas" class="campo">
+              <option value="">Elegí una opción</option>
+              <option value="0-50">Hasta 50</option>
+              <option value="51-200">Entre 51 y 200</option>
+              <option value="201-500">Entre 201 y 500</option>
+              <option value="501+">Más de 500</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <label for="mensaje" class="campo-label">
+            Algo que quieras contarme <span class="font-normal text-slate-500">(opcional)</span>
+          </label>
+          <textarea
+            id="mensaje"
+            name="mensaje"
+            rows="3"
+            class="campo resize-none"
+            placeholder="De qué sistema venís, o qué necesitás resolver primero"></textarea>
+        </div>
+
+        <!-- Honeypot: invisible para personas, tentador para bots. -->
+        <div class="absolute left-[-9999px]" aria-hidden="true">
+          <label for="_website">No completar</label>
+          <input type="text" id="_website" name="_website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <p
+          id="form-error"
+          class="mt-5 hidden rounded-control border border-naranja-500/40 bg-naranja-500/10 px-3.5 py-3 text-sm text-naranja-300"
+          role="alert"
+        >
+        </p>
+
+        <button type="submit" id="form-enviar" class="btn-primario mt-6 w-full disabled:opacity-60">
+          <span id="form-enviar-texto">Ir al pago de {PRECIO_TEXTO}</span>
+          <Icon id="form-enviar-icono" name="ph:arrow-right-bold" class="h-4 w-4" />
+        </button>
+
+        <p class="mt-4 text-sm text-slate-500">
+          Te contactamos por email o WhatsApp para coordinar la puesta en marcha. Tus datos no se
+          comparten con nadie.
+        </p>
+      </form>
     </div>
-
-    <form id="form-solicitud" class="bg-white border border-slate-200 rounded-lg p-6 lg:p-8 space-y-5 shadow-sm">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label for="nombre" class="block text-xs font-medium text-slate-700 mb-1">
-            Nombre completo <span class="text-red-500">*</span>
-          </label>
-          <input type="text" id="nombre" name="nombre" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="Juan Pérez"/>
-        </div>
-        <div>
-          <label for="telefono" class="block text-xs font-medium text-slate-700 mb-1">
-            Teléfono <span class="text-red-500">*</span>
-          </label>
-          <input type="tel" id="telefono" name="telefono" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="+54 11 5555 5555"/>
-        </div>
-        <div>
-          <label for="email" class="block text-xs font-medium text-slate-700 mb-1">
-            Email <span class="text-red-500">*</span>
-          </label>
-          <input type="email" id="email" name="email" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="tuemail@ejemplo.com"/>
-        </div>
-        <div>
-          <label for="empresa" class="block text-xs font-medium text-slate-700 mb-1">
-            Razón social o nombre de tu estudio
-          </label>
-          <input type="text" id="empresa" name="empresa" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none" placeholder="Ej. Lobo Seguros"/>
-        </div>
-        <div>
-          <label for="cuit" class="block text-xs font-medium text-slate-700 mb-1">
-            CUIT <span class="text-red-500">*</span>
-          </label>
-          <input type="text" id="cuit" name="cuit" required inputmode="numeric" pattern="[0-9\-]{11,13}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none font-mono" placeholder="20-12345678-9"/>
-        </div>
-        <div>
-          <label for="cantidad_polizas" class="block text-xs font-medium text-slate-700 mb-1">
-            Cantidad aprox. de pólizas activas
-          </label>
-          <select id="cantidad_polizas" name="cantidad_polizas" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none bg-white">
-            <option value="">Seleccionar…</option>
-            <option value="0-50">0 a 50</option>
-            <option value="51-200">51 a 200</option>
-            <option value="201-500">201 a 500</option>
-            <option value="501+">Más de 500</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label for="mensaje" class="block text-xs font-medium text-slate-700 mb-1">
-          Contanos algo (opcional)
-        </label>
-        <textarea id="mensaje" name="mensaje" rows="3" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-fidcore-500/20 focus:border-fidcore-500 outline-none resize-none" placeholder="¿De qué CRM venís? ¿Alguna funcionalidad puntual que te interese?"></textarea>
-      </div>
-
-      <!-- Honeypot anti-spam (oculto para humanos) -->
-      <input type="text" name="_website" tabindex="-1" autocomplete="off" class="absolute -left-[9999px]" aria-hidden="true"/>
-
-      <div id="form-error" class="hidden p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700"></div>
-
-      <button type="submit" id="form-submit" class="w-full inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 disabled:bg-slate-400 text-white font-medium px-5 py-3.5 rounded-md transition-colors">
-        <span id="form-submit-label">Ir al pago — $69.800</span>
-        <svg id="form-submit-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-        </svg>
-      </button>
-
-      <p class="text-2xs text-slate-500 text-center">
-        Al enviar aceptás que te contactemos por email/WhatsApp. Tus datos no se comparten.
-      </p>
-    </form>
   </div>
 </section>
 
-<script>
-  const PANEL_URL = 'https://panel.fidcore.com.ar'
+<script define:vars={{ PANEL_URL, PRECIO_TEXTO, FALLBACK: CONTACTO_FALLBACK }}>
+  const form = document.getElementById('form-solicitud')
+  const boton = document.getElementById('form-enviar')
+  const textoBoton = document.getElementById('form-enviar-texto')
+  const cajaError = document.getElementById('form-error')
 
-  const form = document.getElementById('form-solicitud') as HTMLFormElement | null
-  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null
-  const submitLabel = document.getElementById('form-submit-label') as HTMLSpanElement | null
-  const errorBox = document.getElementById('form-error') as HTMLDivElement | null
+  const TEXTO_INICIAL = `Ir al pago de ${PRECIO_TEXTO}`
 
-  if (form && submitBtn && submitLabel && errorBox) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      errorBox.classList.add('hidden')
-      submitBtn.disabled = true
-      submitLabel.textContent = 'Procesando…'
+  if (form && boton && textoBoton && cajaError) {
+    const mostrarError = (mensaje, ofrecerContacto) => {
+      cajaError.textContent = mensaje
+      if (ofrecerContacto) {
+        const enlace = document.createElement('a')
+        enlace.href = FALLBACK.href
+        enlace.textContent = ` ${FALLBACK.label}.`
+        enlace.className = 'underline underline-offset-4'
+        cajaError.appendChild(enlace)
+      }
+      cajaError.classList.remove('hidden')
+    }
 
-      const data = new FormData(form)
-      const payload: Record<string, string> = {}
-      for (const [k, v] of data.entries()) {
-        payload[k] = String(v)
+    const restaurar = () => {
+      boton.disabled = false
+      textoBoton.textContent = TEXTO_INICIAL
+    }
+
+    form.addEventListener('submit', async (evento) => {
+      evento.preventDefault()
+      cajaError.classList.add('hidden')
+      cajaError.textContent = ''
+
+      // Validación del navegador primero, para no gastar un intento del rate limit.
+      if (!form.checkValidity()) {
+        form.reportValidity()
+        return
+      }
+
+      const cuit = String(new FormData(form).get('cuit') ?? '').replace(/\D/g, '')
+      if (cuit.length !== 11) {
+        mostrarError('El CUIT tiene que tener 11 dígitos.', false)
+        document.getElementById('cuit')?.focus()
+        return
+      }
+
+      boton.disabled = true
+      textoBoton.textContent = 'Procesando'
+
+      const datos = {}
+      for (const [clave, valor] of new FormData(form).entries()) {
+        datos[clave] = String(valor)
       }
 
       try {
-        const res = await fetch(`${PANEL_URL}/api/publico/solicitud`, {
+        const respuesta = await fetch(`${PANEL_URL}/api/publico/solicitud`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(datos),
         })
-        const json = await res.json()
+        const cuerpo = await respuesta.json().catch(() => null)
 
-        if (json.ok && json.data?.mp_link) {
-          window.location.href = json.data.mp_link
-        } else {
-          errorBox.textContent = json.error || 'Hubo un error. Intentá de nuevo o contactanos por WhatsApp.'
-          errorBox.classList.remove('hidden')
-          submitBtn.disabled = false
-          submitLabel.textContent = 'Ir al pago — $69.800'
+        if (respuesta.ok && cuerpo?.data?.mp_link) {
+          window.location.href = cuerpo.data.mp_link
+          return
         }
-      } catch (err) {
-        errorBox.textContent = 'No pudimos conectarnos. Verificá tu conexión e intentá de nuevo.'
-        errorBox.classList.remove('hidden')
-        submitBtn.disabled = false
-        submitLabel.textContent = 'Ir al pago — $69.800'
+
+        // 503: el lead quedó guardado pero no hay link de pago.
+        if (respuesta.status === 503) {
+          mostrarError(
+            cuerpo?.error ?? 'No pudimos generar el link de pago. Ya tenemos tus datos y te contactamos.',
+            true,
+          )
+          textoBoton.textContent = 'Datos enviados'
+          return
+        }
+
+        mostrarError(cuerpo?.error ?? 'No pudimos procesar la solicitud.', true)
+        restaurar()
+      } catch {
+        mostrarError('No pudimos conectarnos. Revisá tu conexión e intentá de nuevo, o', true)
+        restaurar()
       }
     })
   }

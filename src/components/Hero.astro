@@ -1,149 +1,89 @@
 ---
-// Hero principal — mensaje claro + CTA + mockup del CRM.
+import { Icon } from 'astro-icon/components'
+
+/**
+ * Hero de tipografía protagonista.
+ *
+ * Decisiones para que se lea premium y no como plantilla de SaaS:
+ *  - El gradiente de marca queda contenido: la mayor parte del cuadro es navy
+ *    profundo y el azul claro solo asoma abajo a la derecha. Un lavado diagonal
+ *    de punta a punta aclara todo y abarata.
+ *  - El naranja aparece en dos lugares nada más: el botón y tres palabras del
+ *    titular. Concentrado pesa más que repartido.
+ *  - Aire generoso arriba y abajo, sin llegar a que el contenido flote.
+ *
+ * NO lleva captura de producto: la captura real del CRM va en la sección
+ * "producto". Armar una UI falsa con divs sería el recurso más gastado del
+ * diseño hecho por IA.
+ *
+ * PENDIENTE: el texto de esta sección está a la espera de la corrección de
+ * Nahuel. El H1 tiene que servir además para SEO.
+ */
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div>
-        <div class="inline-flex items-center gap-1.5 text-2xs font-semibold uppercase tracking-wider text-fidcore-700 bg-fidcore-50 px-2.5 py-1 rounded-full border border-fidcore-200 mb-4">
-          <span class="w-1.5 h-1.5 rounded-full bg-fidcore-500"></span>
-          Hecho por y para PAS argentinos
-        </div>
+<section class="relative isolate overflow-hidden">
+  <!--
+    Sin base opaca propia: el hero hereda el fondo del body y solo suma sus
+    gradientes. Una base más oscura acá dejaba una costura horizontal visible
+    donde terminaba la sección.
+  -->
 
-        <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
-          El CRM que tu <span class="text-fidcore-600">estudio de seguros</span> merece
-        </h1>
+  <!-- Gradiente de marca, contenido en la esquina inferior derecha. -->
+  <div
+    class="absolute inset-0"
+    style="background: radial-gradient(120% 130% at 88% 118%, #2A4A7A 0%, #1E3A5F 32%, rgba(10,22,40,0) 68%)"
+    aria-hidden="true"
+  >
+  </div>
 
-        <p class="text-lg text-slate-600 mt-5 leading-relaxed">
-          Gestioná clientes, pólizas, siniestros, renovaciones y comisiones desde
-          una sola herramienta. Con IA que importa tus pólizas en PDF y portal
-          del asegurado incluido.
-        </p>
+  <!-- Luz tenue detrás del titular, para que el texto no quede sobre un plano muerto. -->
+  <div
+    class="absolute inset-0"
+    style="background: radial-gradient(70% 55% at 12% 24%, rgba(42,74,122,0.4) 0%, rgba(10,22,40,0) 62%)"
+    aria-hidden="true"
+  >
+  </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 mt-8">
-          <a
-            href="#contacto"
-            class="inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white font-medium px-5 py-3 rounded-md transition-colors"
-          >
-            Empezar ahora — $69.800/mes
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-          </a>
-          <a
-            href="#features"
-            class="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium px-5 py-3 rounded-md border border-slate-300 transition-colors"
-          >
-            Ver funcionalidades
-          </a>
-        </div>
+  <!-- Textura de puntos del login del CRM, misma escala. -->
+  <div
+    class="absolute inset-0 opacity-[0.045]"
+    style="background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 80% 70%, white 1px, transparent 1px); background-size: 60px 60px, 90px 90px"
+    aria-hidden="true"
+  >
+  </div>
 
-        <div class="flex items-center gap-6 mt-8 text-2xs text-slate-500">
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            Sin permanencia
-          </div>
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            Actualizaciones incluidas
-          </div>
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            Backups automáticos
-          </div>
-        </div>
-      </div>
+  <div class="contenedor relative pb-28 pt-24 lg:pb-40 lg:pt-28">
+    <div class="max-w-4xl">
+      <p class="eyebrow revelar">Hecho por y para PAS argentinos</p>
 
-      <!-- Mockup del CRM (SVG estilizado, placeholder mientras no hay screenshots reales) -->
-      <div class="relative">
-        <div class="absolute -inset-4 bg-gradient-to-tr from-fidcore-100 to-navy-100 rounded-2xl blur-2xl opacity-60"></div>
-        <div class="relative bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden">
-          <!-- Barra de navegador -->
-          <div class="bg-slate-100 border-b border-slate-200 px-3 py-2 flex items-center gap-1.5">
-            <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-            <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-            <div class="flex-1 mx-3 bg-white rounded px-2 py-0.5 text-2xs text-slate-500 font-mono">
-              app.fidcore.com.ar/crm/clientes
-            </div>
-          </div>
+      <!--
+        Patrón del titular: todo blanco y UNA sola pieza corta en naranja.
+        El naranja concentrado en pocas palabras pesa más que repartido en media
+        frase, y es lo que separa un titular caro de uno que grita.
+      -->
+      <h1 class="titulo mt-7 text-d-md sm:text-d-lg lg:text-d-xl revelar" style="transition-delay: 90ms">
+        Ninguna póliza se te vence sin que
+        <span class="inline-block text-naranja-500">lo sepas.</span>
+      </h1>
 
-          <!-- Sidebar + contenido mock -->
-          <div class="flex h-64 lg:h-80">
-            <div class="w-16 bg-navy-900 flex flex-col items-center py-3 gap-3">
-              <div class="w-8 h-8 rounded bg-navy-800"></div>
-              <div class="w-8 h-8 rounded bg-fidcore-600"></div>
-              <div class="w-8 h-8 rounded bg-navy-800"></div>
-              <div class="w-8 h-8 rounded bg-navy-800"></div>
-              <div class="w-8 h-8 rounded bg-navy-800"></div>
-            </div>
-            <div class="flex-1 p-4 bg-slate-50/50">
-              <div class="flex items-center justify-between mb-3">
-                <div>
-                  <div class="text-xs font-semibold text-slate-800">Clientes</div>
-                  <div class="text-2xs text-slate-500">1.284 activos</div>
-                </div>
-                <div class="w-20 h-6 rounded bg-navy-900"></div>
-              </div>
-              <div class="grid grid-cols-3 gap-2 mb-3">
-                <div class="bg-white rounded border border-slate-200 p-2">
-                  <div class="text-2xs text-slate-500">Activos</div>
-                  <div class="font-mono font-bold text-slate-800 text-sm">1.284</div>
-                </div>
-                <div class="bg-white rounded border border-slate-200 p-2">
-                  <div class="text-2xs text-slate-500">Nuevos mes</div>
-                  <div class="font-mono font-bold text-emerald-600 text-sm">+47</div>
-                </div>
-                <div class="bg-white rounded border border-slate-200 p-2">
-                  <div class="text-2xs text-slate-500">Renovar</div>
-                  <div class="font-mono font-bold text-amber-600 text-sm">23</div>
-                </div>
-              </div>
-              <div class="bg-white rounded border border-slate-200 divide-y divide-slate-100">
-                <div class="px-2 py-1.5 flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full bg-fidcore-100"></div>
-                  <div class="flex-1">
-                    <div class="h-2 bg-slate-200 rounded w-2/3"></div>
-                    <div class="h-1.5 bg-slate-100 rounded w-1/3 mt-1"></div>
-                  </div>
-                  <div class="w-12 h-2 bg-slate-100 rounded"></div>
-                </div>
-                <div class="px-2 py-1.5 flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full bg-fidcore-100"></div>
-                  <div class="flex-1">
-                    <div class="h-2 bg-slate-200 rounded w-2/3"></div>
-                    <div class="h-1.5 bg-slate-100 rounded w-1/3 mt-1"></div>
-                  </div>
-                  <div class="w-12 h-2 bg-slate-100 rounded"></div>
-                </div>
-                <div class="px-2 py-1.5 flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full bg-fidcore-100"></div>
-                  <div class="flex-1">
-                    <div class="h-2 bg-slate-200 rounded w-2/3"></div>
-                    <div class="h-1.5 bg-slate-100 rounded w-1/3 mt-1"></div>
-                  </div>
-                  <div class="w-12 h-2 bg-slate-100 rounded"></div>
-                </div>
-                <div class="px-2 py-1.5 flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full bg-fidcore-100"></div>
-                  <div class="flex-1">
-                    <div class="h-2 bg-slate-200 rounded w-2/3"></div>
-                    <div class="h-1.5 bg-slate-100 rounded w-1/3 mt-1"></div>
-                  </div>
-                  <div class="w-12 h-2 bg-slate-100 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <p class="bajada mt-8 revelar" style="transition-delay: 180ms">
+        Clientes, pólizas, siniestros y comisiones en un solo sistema. La IA lee el PDF de la
+        póliza y carga los datos sola.
+      </p>
+
+      <div
+        class="mt-11 flex flex-col gap-3 sm:flex-row sm:items-center revelar"
+        style="transition-delay: 270ms"
+      >
+        <a href="#solicitar" class="btn-primario">
+          Empezar ahora
+          <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
+        </a>
+        <a href="#producto" class="btn-secundario">Ver el producto</a>
       </div>
     </div>
   </div>
+
+  <!-- Cierre inferior: filete que separa el hero sin cortar con una línea dura. -->
+  <div class="filete absolute bottom-0 left-0 right-0" aria-hidden="true"></div>
 </section>

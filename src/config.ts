@@ -1,11 +1,19 @@
 /**
- * Constantes de la landing. Fuente única de verdad.
+ * Constantes de la landing.
  *
- * IMPORTANTE, el precio: el panel cobra lo que dice
- * `configuracion_finanzas.precio_saas_publico_ars`. Si lo cambiás en
- * /dashboard/finanzas → Configuración, hay que actualizar PRECIO_ARS acá y
- * volver a publicar la landing, sino la página anuncia un precio distinto al
- * que le va a llegar al cliente en Mercado Pago.
+ * EL PRECIO YA NO SE MANTIENE ACÁ. La página lo pide al arrancar a
+ * `GET /api/publico/precio` del panel, que devuelve
+ * `configuracion_finanzas.precio_saas_publico_ars` — el mismo número con el
+ * que se arma el preapproval de Mercado Pago. Lo que se anuncia y lo que se
+ * cobra salen de la misma fila.
+ *
+ * Antes vivía sólo acá, y el comentario de este bloque avisaba de que había
+ * que actualizarlo a mano y volver a publicar. Eso funciona hasta la primera
+ * vez que uno se olvida: el PAS lee un importe y le llega otro.
+ *
+ * PRECIO_ARS queda como **respaldo**, para cuando el panel no conteste: es una
+ * página estática y tiene que mostrar un precio igual. Conviene dejarlo cerca
+ * del real, pero ya no es el que manda.
  */
 
 export const PRECIO_ARS = 69800

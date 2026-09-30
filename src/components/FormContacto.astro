@@ -103,7 +103,7 @@ import { PANEL_URL, PRECIO_TEXTO, CONTACTO_FALLBACK } from '../config'
         </p>
 
         <button type="submit" id="form-enviar" class="btn-primario mt-6 w-full disabled:opacity-60">
-          <span id="form-enviar-texto">Ir al pago de {PRECIO_TEXTO}</span>
+          <span id="form-enviar-texto">Ir al pago de <span data-precio>{PRECIO_TEXTO}</span></span>
           <Icon id="form-enviar-icono" name="ph:arrow-right-bold" class="h-4 w-4" />
         </button>
 
@@ -122,7 +122,19 @@ import { PANEL_URL, PRECIO_TEXTO, CONTACTO_FALLBACK } from '../config'
   const textoBoton = document.getElementById('form-enviar-texto')
   const cajaError = document.getElementById('form-error')
 
-  const TEXTO_INICIAL = `Ir al pago de ${PRECIO_TEXTO}`
+  /**
+   * El importe del botón NO sale de una constante congelada al compilar: el
+   * script de la base pudo haberlo reemplazado por el que manda el panel, que
+   * es el que realmente se va a cobrar. Si `restaurar()` usara la constante,
+   * un error del envío dejaría el botón anunciando un precio y la tarjeta de
+   * arriba otro.
+   *
+   * Se lee de `documentElement.dataset`, no del span de adentro del botón:
+   * `restaurar()` reescribe ese contenido, así que a partir del segundo error
+   * el span ya no estaría y volveríamos al número viejo.
+   */
+  const precioVivo = () => document.documentElement.dataset.precioTexto || PRECIO_TEXTO
+  const textoInicial = () => `Ir al pago de ${precioVivo()}`
 
   if (form && boton && textoBoton && cajaError) {
     const mostrarError = (mensaje, ofrecerContacto) => {
@@ -139,7 +151,7 @@ import { PANEL_URL, PRECIO_TEXTO, CONTACTO_FALLBACK } from '../config'
 
     const restaurar = () => {
       boton.disabled = false
-      textoBoton.textContent = TEXTO_INICIAL
+      textoBoton.textContent = textoInicial()
     }
 
     form.addEventListener('submit', async (evento) => {

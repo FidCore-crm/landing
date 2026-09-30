@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css'
-import { PRECIO_TEXTO } from '../config'
+import { PRECIO_TEXTO, PANEL_URL } from '../config'
 
 export interface Props {
   title?: string
@@ -106,6 +106,46 @@ const ogImagen = new URL('/og.png', Astro.site ?? 'https://fidcore.com.ar')
       } else {
         objetivos.forEach((o) => o.classList.add('visible'))
       }
+    </script>
+
+    <script define:vars={{ PANEL_URL, PRECIO_TEXTO }}>
+      /**
+       * El precio que se anuncia sale del panel, que es el que cobra.
+       *
+       * Esta página es estática y se publica cuando se publica; el panel, en
+       * cambio, cobra lo que diga `configuracion_finanzas.precio_saas_publico_ars`
+       * en el momento en que el PAS manda el formulario. Mientras el número
+       * compilado acá coincidiera no se notaba, pero el día que el precio suba
+       * desde el panel y la página no se vuelva a publicar, se anuncia un
+       * importe y se cobra otro.
+       *
+       * El número compilado queda como respaldo: si el panel no contesta, la
+       * página tiene que mostrar un precio igual. Se actualiza en silencio —no
+       * hay estado de carga— porque el respaldo ya es correcto el 99% del
+       * tiempo y un parpadeo del precio se lee peor que un precio quieto.
+       */
+      const APLICAR = (texto) => {
+        document.documentElement.dataset.precioTexto = texto
+        document.querySelectorAll('[data-precio]').forEach((el) => {
+          el.textContent = texto
+        })
+      }
+
+      // Se deja puesto el compilado desde el arranque: así el botón del
+      // formulario tiene de dónde leerlo aunque el fetch nunca vuelva.
+      document.documentElement.dataset.precioTexto = PRECIO_TEXTO
+
+      fetch(`${PANEL_URL}/api/publico/precio`, { headers: { Accept: 'application/json' } })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          const precio = Number(j?.data?.precio_ars)
+          if (!Number.isFinite(precio) || precio <= 0) return
+          APLICAR(`$${precio.toLocaleString('es-AR')}`)
+        })
+        .catch(() => {
+          // El panel puede estar caído o el CORS mal configurado. La página ya
+          // muestra el precio compilado: no hay nada que avisarle al visitante.
+        })
     </script>
   </body>
 </html>

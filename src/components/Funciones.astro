@@ -1,0 +1,408 @@
+---
+/**
+ * Inventario completo del sistema: 12 bloques, una línea por función.
+ *
+ * Existe porque la página vendía el producto con 5 tarjetas y un CRM de 21
+ * módulos no entra en 5 tarjetas. Las 5 tarjetas siguen arriba (Features) y
+ * hacen de gancho; acá abajo está todo, para el PAS que ya se interesó y
+ * quiere saber qué compra.
+ *
+ * REGLA: cada función de esta lista existe y se verificó contra el código del
+ * CRM, no contra la memoria ni contra el changelog. Si una función se saca del
+ * CRM hay que sacarla de acá el mismo día. Antes de agregar una, abrir el
+ * módulo y confirmarla.
+ *
+ * Trampas conocidas del copy de esta página:
+ *   · El agente NO extrae la prima. Extrae la SUMA ASEGURADA, que es otra
+ *     cosa. Ya hubo una versión que decía "Prima".
+ *   · No prometer "fusionar duplicados": no entran duplicados, lo impide la
+ *     base con índices únicos sobre el DNI normalizado.
+ *
+ * Layout: rótulo del bloque a la izquierda, funciones en grilla a la derecha.
+ * En mobile se apila. Sin panel por bloque: doce paneles seguidos pesan más
+ * que la información que llevan adentro.
+ */
+
+const bloques = [
+  {
+    titulo: 'Cargar una póliza',
+    bajada: 'Tres caminos para que los datos entren, y ninguno te obliga a usar IA.',
+    funciones: [
+      {
+        nombre: 'Importador con IA',
+        texto:
+          'Arrastrás el PDF y la IA completa el formulario: asegurado, tomador, vigencia, suma asegurada, compañía, ramo, cobertura y medio de pago. Vos revisás y confirmás.',
+      },
+      {
+        nombre: 'Avisa de lo que no está seguro',
+        texto:
+          'Si un dato salió dudoso lo marca con el motivo y su sugerencia. Cuando el problema es grave, frena el alta en vez de guardar algo mal.',
+      },
+      {
+        nombre: 'Importación masiva',
+        texto:
+          'Subís la planilla y el sistema crea clientes y pólizas fila por fila. Cada importación queda con su historial: qué entró, qué falló y por qué.',
+      },
+      {
+        nombre: 'Tus catálogos',
+        texto:
+          'Compañías, ramos, coberturas, medios de pago. Los definís vos y la IA mapea contra los tuyos; si aparece una cobertura que no tenés, te la propone.',
+      },
+      {
+        nombre: 'Carga manual',
+        texto:
+          'El formulario completo, por si el PDF viene mal escaneado o preferís cargar a mano.',
+      },
+      {
+        nombre: 'No entran duplicados',
+        texto:
+          'El mismo DNI no se puede cargar dos veces, lo escribas con guiones o sin ellos. Lo frena la base, no el formulario: ni el importador masivo los cuela.',
+      },
+    ],
+  },
+  {
+    titulo: 'La póliza y su ciclo',
+    bajada: 'Todo lo que le pasa a una póliza después de emitida, sin salir de su ficha.',
+    funciones: [
+      {
+        nombre: 'Endosos',
+        texto:
+          'Cambio de suma, de cuota o de los datos del riesgo. Queda el detalle de qué cambió y figura en el historial de la póliza.',
+      },
+      {
+        nombre: 'Renovaciones encadenadas',
+        texto:
+          'La renovación es una póliza nueva con su número, vinculada a la anterior. Ves la cadena completa y no perdés el historial.',
+      },
+      {
+        nombre: 'Comparador de renovaciones',
+        texto:
+          'Qué cambió entre la póliza que vence y la que te mandó la compañía: suma, cuota, coberturas.',
+      },
+      {
+        nombre: 'Bajas y cancelaciones',
+        texto:
+          'Anulación, cancelación, cancelación programada a fecha futura y «no se renueva». Cada una con su efecto sobre lo que cuelga de la póliza.',
+      },
+      {
+        nombre: 'Cupones de pago',
+        texto:
+          'Para las pólizas que se cobran en efectivo: el sistema arma la cola del día según el vencimiento de cada una y te avisa.',
+      },
+      {
+        nombre: 'El riesgo, por ramo',
+        texto:
+          'Los campos cambian según lo que asegures —patente y motor en automotor, domicilio y medidas de seguridad en hogar— y podés agregar los tuyos.',
+      },
+    ],
+  },
+  {
+    titulo: 'Vencimientos',
+    bajada: 'Lo que vence, ordenado por cuánto falta.',
+    funciones: [
+      {
+        nombre: 'Tablero por urgencia',
+        texto:
+          'Qué vence en 7, 15 y 30 días, qué ya venció y qué se renovó. Cada corte abre el listado que cuenta.',
+      },
+      {
+        nombre: 'Avisos automáticos',
+        texto:
+          'El sistema te avisa solo, y no repite el mismo aviso todos los días. Te avisa a vos: hablarle al asegurado lo decidís vos.',
+      },
+      {
+        nombre: 'Calendario',
+        texto:
+          'Vencimientos de pólizas y tareas en el mismo mes, con vista de los próximos 30 días y el detalle de cada día al costado.',
+      },
+    ],
+  },
+  {
+    titulo: 'Siniestros',
+    bajada: 'Desde la denuncia hasta el cierre, con el registro de quién hizo qué.',
+    funciones: [
+      {
+        nombre: 'Número de caso propio',
+        texto:
+          'Con el prefijo que elijas (LS-2026-0001). El número de la compañía va aparte, porque llega después y a veces no llega.',
+      },
+      {
+        nombre: 'Estado y bitácora',
+        texto:
+          'El estado a la vista y la bitácora cronológica debajo. Si el asegurado llama, sabés dónde está parado el caso.',
+      },
+      {
+        nombre: 'El formulario cambia con el caso',
+        texto:
+          'Los campos dependen del ramo y del tipo de siniestro: lugar, tercero, lesionados, taller. No te pide lo que no corresponde.',
+      },
+      {
+        nombre: 'Reclamos de terceros',
+        texto:
+          'El caso en el que el reclamo viene de afuera, con sus datos y su seguimiento.',
+      },
+      {
+        nombre: 'Documentación y fotos',
+        texto:
+          'Los archivos del caso separados por categoría, y el visor a pantalla completa para mirarlos sin descargarlos.',
+      },
+      {
+        nombre: 'Papelera',
+        texto: 'Lo que borrás se puede recuperar.',
+      },
+    ],
+  },
+  {
+    titulo: 'El portal del asegurado',
+    bajada: 'Tu cliente resuelve solo lo que hoy te llama para pedirte.',
+    funciones: [
+      {
+        nombre: 'Sin contraseña',
+        texto:
+          'Un link propio que le mandás por email o WhatsApp. No hay usuario que recordar ni contraseña que blanquear.',
+      },
+      {
+        nombre: 'Sus pólizas y sus papeles',
+        texto: 'Las ve y se descarga la documentación cuando la necesita.',
+      },
+      {
+        nombre: 'Sigue su siniestro',
+        texto: 'Ve en qué estado está el caso, sin llamarte para preguntarlo.',
+      },
+      {
+        nombre: 'Denuncia un siniestro',
+        texto:
+          'Con el formulario ya completado con sus datos, y el select mostrando sólo sus pólizas vigentes.',
+      },
+      {
+        nombre: 'Asistencia 24 horas',
+        texto:
+          'El teléfono de la compañía de cada póliza, con el botón para llamar desde el celular.',
+      },
+      {
+        nombre: 'Se instala como app',
+        texto: 'Queda como un ícono más en el teléfono, sin pasar por ninguna tienda.',
+      },
+    ],
+  },
+  {
+    titulo: 'Clientes',
+    bajada: 'La ficha que contesta qué pasó con este cliente desde que entró.',
+    funciones: [
+      {
+        nombre: 'Su historial completo',
+        texto:
+          'Cuántas pólizas tuvo y de qué, por qué compañías pasó, cuántos siniestros y de qué tipo. Cada cadena de renovaciones, completa.',
+      },
+      {
+        nombre: 'Personas físicas y jurídicas',
+        texto:
+          'Con su CUIT validado, sus datos de contacto y su domicilio. Asegurado y tomador pueden ser distintos.',
+      },
+      {
+        nombre: 'Registro de llamadas',
+        texto: 'Lo que hablaste queda anotado en la ficha, con su fecha.',
+      },
+      {
+        nombre: 'Búsqueda global',
+        texto:
+          'Una sola barra que busca al mismo tiempo en clientes, pólizas y siniestros. Escribís una patente y llegás.',
+      },
+    ],
+  },
+  {
+    titulo: 'Comercial',
+    bajada: 'Lo que todavía no es una póliza.',
+    funciones: [
+      {
+        nombre: 'Leads y oportunidades',
+        texto:
+          'En tablero, con su monto estimado y su probabilidad de cierre. Captación y venta cruzada, separadas.',
+      },
+      {
+        nombre: 'Cotizaciones en PDF',
+        texto:
+          'Con tu marca y su fecha de validez. Si vence, el sistema te ofrece renovarla en vez de rehacerla.',
+      },
+      {
+        nombre: 'Embudo de conversión',
+        texto:
+          'Las tasas entre etapas, el ciclo promedio en días, el valor promedio de lo que ganás y las razones por las que perdés.',
+      },
+      {
+        nombre: 'Formulario web propio',
+        texto:
+          'El que ponés en tu página o mandás por WhatsApp. Las consultas entran directo al sistema como leads.',
+      },
+    ],
+  },
+  {
+    titulo: 'Comerciales y comisiones',
+    bajada: 'Si trabajás con productores a tu cargo.',
+    funciones: [
+      {
+        nombre: 'Reglas por comercial',
+        texto:
+          'El porcentaje que le corresponde, con tramos por meses. Se carga una vez y el sistema calcula.',
+      },
+      {
+        nombre: 'Liquidación mensual',
+        texto:
+          'Con el detalle de cada ítem congelado al momento de liquidar, para que el número de hace seis meses siga siendo el mismo.',
+      },
+      {
+        nombre: 'Portal del comercial',
+        texto: 'Cada uno entra y ve lo suyo, con el gráfico de sus últimos seis meses.',
+      },
+      {
+        nombre: 'Planillas de las compañías',
+        texto:
+          'Importás la planilla de comisiones y el sistema la asocia a tus pólizas. Controlás lo que te liquidaron contra lo que esperabas.',
+      },
+    ],
+  },
+  {
+    titulo: 'El día a día',
+    bajada: 'Lo que se usa todas las mañanas.',
+    funciones: [
+      {
+        nombre: 'Tareas',
+        texto:
+          'Con tipo, prioridad y vencimiento. Las que se repiten crean sola la siguiente cuando las completás.',
+      },
+      {
+        nombre: 'Notificaciones',
+        texto:
+          'La campana con lo que necesita tu atención. Las leídas se limpian solas a los 30 días.',
+      },
+      {
+        nombre: 'Contadores en vivo',
+        texto:
+          'Los números del menú se actualizan solos. Si trabajás con alguien más, ves lo que hizo sin apretar F5.',
+      },
+      {
+        nombre: 'Correos con tus plantillas',
+        texto:
+          'Aviso de vencimiento, bienvenida, cancelación. Las editás vos y el sistema las manda cuando corresponde.',
+      },
+    ],
+  },
+  {
+    titulo: 'Análisis de cartera',
+    bajada: 'Diez gráficos sobre todo tu histórico, no sólo sobre lo vigente.',
+    funciones: [
+      {
+        nombre: 'Cómo está repartida',
+        texto: 'Por compañía, por ramo, por cobertura, por medio de pago y por antigüedad.',
+      },
+      {
+        nombre: 'Cómo viene el año',
+        texto:
+          'La evolución del saldo neto a 12 meses y la facturación comparada contra el año anterior.',
+      },
+      {
+        nombre: 'Siniestralidad',
+        texto:
+          'Cuánto siniestra cada compañía, la tasa sobre la cartera y cuánto tarda en resolverse un caso.',
+      },
+    ],
+  },
+  {
+    titulo: 'Tu marca',
+    bajada: 'Lo que ve el asegurado lleva tu nombre, no el nuestro.',
+    funciones: [
+      {
+        nombre: 'Tu color',
+        texto:
+          'El sistema lo toma y lo aplica al portal, a los correos, al formulario de denuncia y al PDF de cotización.',
+      },
+      {
+        nombre: 'Tu avatar y tu logo',
+        texto:
+          'El avatar cuadrado y el logo horizontal son dos piezas distintas, y elegís cuál va en cada lugar.',
+      },
+      {
+        nombre: 'Cuatro estilos de encabezado',
+        texto: 'Para que el correo salga como querés que salga, con vista previa antes de mandar.',
+      },
+      {
+        nombre: 'Biblioteca de imágenes',
+        texto: 'Las que usás en los correos, guardadas y listas para reusar.',
+      },
+    ],
+  },
+  {
+    titulo: 'Administración',
+    bajada: 'Lo que no se ve hasta que hace falta.',
+    funciones: [
+      {
+        nombre: 'Usuarios y permisos',
+        texto:
+          'Cada uno con su rol. Si querés, un vendedor ve solamente su cartera y no la del resto.',
+      },
+      {
+        nombre: 'Backups',
+        texto:
+          'Copia diaria de todo, descargable, y se puede restaurar. Los archivos también, no sólo la base.',
+      },
+      {
+        nombre: 'Se actualiza solo',
+        texto:
+          'Las versiones nuevas se instalan sin que hagas nada, con vuelta atrás si algo sale mal.',
+      },
+      {
+        nombre: 'Centro de ayuda adentro',
+        texto: 'Treinta artículos dentro del sistema, sin salir a buscar un manual.',
+      },
+    ],
+  },
+]
+---
+
+<section id="funciones" class="seccion">
+  <div class="contenedor">
+    <div class="max-w-3xl">
+      <p class="eyebrow revelar">Todo lo que hace</p>
+      <h2 class="titulo-seccion mt-4 revelar" style="transition-delay: 70ms">
+        El sistema completo, función por función.
+      </h2>
+      <p class="bajada mt-5 revelar" style="transition-delay: 140ms">
+        Un solo plan, así que todo esto entra. No hay módulos aparte ni versión recortada.
+      </p>
+    </div>
+
+    <div class="mt-16 flex flex-col gap-14 lg:gap-16">
+      {
+        bloques.map((bloque, i) => (
+          <div class="revelar" style={`transition-delay: ${Math.min(i, 4) * 60}ms`}>
+            {i > 0 && <div class="filete mb-14 lg:mb-16" />}
+
+            <div class="grid gap-8 lg:grid-cols-[minmax(0,15rem)_1fr] lg:gap-14">
+              {/* Rótulo del bloque. En pantalla grande queda fijo mientras se
+                  recorren sus funciones: sin eso, a la mitad de la lista uno ya
+                  no sabe de qué bloque está leyendo. */}
+              <div class="lg:sticky lg:top-28 lg:self-start">
+                <div class="flex items-baseline gap-3">
+                  <span class="font-mono text-2xs text-naranja-500">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 class="titulo text-2xl leading-tight sm:text-[1.65rem]">{bloque.titulo}</h3>
+                </div>
+                <p class="mt-3 text-sm leading-relaxed text-slate-500">{bloque.bajada}</p>
+              </div>
+
+              <div class="grid gap-x-10 gap-y-7 sm:grid-cols-2">
+                {bloque.funciones.map((f) => (
+                  <div>
+                    <h4 class="text-base font-semibold text-white">{f.nombre}</h4>
+                    <p class="mt-1.5 text-sm leading-relaxed text-slate-400">{f.texto}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -16,8 +16,17 @@ import { Icon } from 'astro-icon/components'
  * "producto". Armar una UI falsa con divs sería el recurso más gastado del
  * diseño hecho por IA.
  *
- * PENDIENTE: el texto de esta sección está a la espera de la corrección de
- * Nahuel. El H1 tiene que servir además para SEO.
+ * El H1 lidera con la carga por IA: es el diferencial real y es lo que el PAS
+ * eligió como lo que más le vende, junto con el portal del asegurado y que
+ * esté todo en un sistema — esos dos los levanta la bajada.
+ *
+ * El titular anterior era «Ninguna póliza se te vence sin que lo sepas», que
+ * vende los vencimientos: la única de las cuatro opciones que NO eligió.
+ *
+ * No repite a las otras secciones: «Arrastrás el PDF. Ya está cargada» es de
+ * Features y «Toda tu cartera en una pantalla» es de Producto. Tres titulares
+ * diciendo lo mismo con distintas palabras es lo que hace que una landing se
+ * lea como relleno.
  */
 ---
 
@@ -62,13 +71,14 @@ import { Icon } from 'astro-icon/components'
         frase, y es lo que separa un titular caro de uno que grita.
       -->
       <h1 class="titulo mt-7 text-d-md sm:text-d-lg lg:text-d-xl revelar" style="transition-delay: 90ms">
-        Ninguna póliza se te vence sin que
-        <span class="inline-block text-naranja-500">lo sepas.</span>
+        Cargar las pólizas
+        <span class="inline-block text-naranja-500">ya no es tu trabajo.</span>
       </h1>
 
       <p class="bajada mt-8 revelar" style="transition-delay: 180ms">
-        Clientes, pólizas, siniestros y comisiones en un solo sistema. La IA lee el PDF de la
-        póliza y carga los datos sola.
+        La IA lee el PDF y completa la ficha; vos revisás y confirmás. Clientes, pólizas,
+        siniestros y comisiones quedan en un solo sistema, y tu cliente entra a ver los suyos
+        sin llamarte.
       </p>
 
       <div

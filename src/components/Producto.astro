@@ -1,43 +1,221 @@
 ---
+import { Icon } from 'astro-icon/components'
+
 /**
- * Sección de producto.
+ * Sección de producto: el sistema de verdad, con datos inventados.
  *
- * PENDIENTE: acá va la captura real del CRM. Hoy hay un slot marcado porque
- * el CRM productivo tiene datos de clientes reales que no se pueden publicar,
- * y todavía no existe un seed de datos demo.
+ * Las capturas NO son maquetas dibujadas: son el CRM corriendo, pixel por
+ * pixel. Lo que cambia es la base — se sacan de una copia donde cada dato
+ * personal fue reemplazado por uno ficticio, y se verificó POR PROGRAMA que
+ * ninguna de las 716 cadenas reales de la cartera de Nahuel aparezca en ninguna
+ * columna de texto. Mirar la imagen a ojo no alcanza: los datos se filtran por
+ * bitácoras, correos enviados, extracciones de PDF e importaciones.
  *
- * Cuando el seed exista:
- *   1. Levantar el CRM con datos demo.
- *   2. Capturar la vista de renovaciones a 2560x1440.
- *   3. Guardar en public/producto/renovaciones.png y reemplazar el slot.
+ * Para rehacerlas, ver la memoria `tooling_capturas_crm_datos_ficticios`.
  *
- * Deliberadamente NO se construye una UI falsa con divs acá.
+ * Decisiones del carrusel:
+ *  · Capturadas a 2x (2880×1800) y servidas a 2560 de ancho en WebP. El texto
+ *    de las tablas es chico: a 1x queda pastoso y parece una captura vieja.
+ *  · Sin librería. Es scroll horizontal con `scroll-snap`, que el navegador ya
+ *    hace bien: anda con el dedo, con la rueda y con las flechas, y si el JS no
+ *    carga igual se puede arrastrar.
+ *  · El marco de ventana no es decoración: sin él la captura flota y se lee
+ *    como una imagen pegada en vez de como un producto.
+ *  · Primero Pólizas, que es de lo que habla el título. El dashboard va
+ *    segundo: es la pantalla que más se mira, pero sola no dice qué guarda
+ *    adentro el sistema.
  */
+
+const pantallas = [
+  {
+    archivo: 'polizas',
+    titulo: 'Pólizas',
+    texto: 'Tu cartera entera, con el bien asegurado y los días que faltan para vencer.',
+  },
+  {
+    archivo: 'dashboard',
+    titulo: 'Dashboard',
+    texto: 'Lo que pasa hoy: lo que vence, lo que falta hacer y lo que quedó anotado.',
+  },
+  {
+    archivo: 'renovaciones',
+    titulo: 'Renovaciones',
+    texto: 'Qué vence y cuándo, ordenado por urgencia. La renovada queda encadenada a la anterior.',
+  },
+  {
+    archivo: 'siniestros',
+    titulo: 'Siniestros',
+    texto: 'Cada caso con su número propio, su estado y el registro de quién hizo qué.',
+  },
+  {
+    archivo: 'comercial-pipeline',
+    titulo: 'Tablero comercial',
+    texto: 'Lo que todavía no es póliza: leads y oportunidades con sus cotizaciones adentro.',
+  },
+  {
+    archivo: 'tareas',
+    titulo: 'Tareas',
+    texto: 'Lo que hay que hacer, con su prioridad y su vencimiento. Las que se repiten se recrean solas.',
+  },
+  {
+    archivo: 'portal',
+    titulo: 'Portal del asegurado',
+    texto: 'Lo que ve tu cliente: sus pólizas, sus papeles y sus siniestros. Entra con un link, sin contraseña.',
+  },
+  {
+    archivo: 'denuncia',
+    titulo: 'Denuncia de siniestro',
+    texto: 'Tu cliente denuncia desde el portal, con sus datos ya cargados. El caso te entra al CRM.',
+  },
+]
 ---
 
 <section id="producto" class="seccion">
   <div class="contenedor">
     <div class="max-w-3xl">
       <h2 class="titulo-seccion revelar">
-        Toda tu cartera en una pantalla que se entiende sola.
+        Así se ve trabajando.
       </h2>
       <p class="bajada mt-5 revelar" style="transition-delay: 80ms">
-        Sin planillas paralelas ni carpetas por cliente. Buscás una patente y tenés la póliza,
-        el asegurado, los siniestros y lo que cobraste.
+        Ocho pantallas del sistema real, desde tu cartera hasta lo que ve tu cliente.
+        Los datos son de ejemplo; el sistema es el que vas a usar.
       </p>
     </div>
 
-    <!-- TODO: reemplazar por public/producto/renovaciones.png (captura real, 2560x1440).
-         Mientras no exista, el slot va contenido para no abrir un vacío en la página. -->
-    <div
-      class="revelar mx-auto mt-10 max-w-3xl overflow-hidden rounded-panel border border-dashed border-white/[0.14] bg-navy-850"
-      style="transition-delay: 160ms"
-    >
-      <div class="grid h-[200px] place-items-center px-6">
-        <p class="text-center font-mono text-sm text-slate-500">
-          Captura del CRM pendiente de datos demo
-        </p>
+    <div class="revelar mt-12" style="transition-delay: 160ms" data-carrusel>
+      <div
+        class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        data-pista
+      >
+        {
+          pantallas.map((p, i) => (
+            <figure class="w-[88%] shrink-0 snap-start sm:w-[80%] lg:w-[74%]" data-lamina>
+              <div class="panel overflow-hidden">
+                <div class="flex items-center gap-1.5 border-b border-white/[0.07] bg-navy-950/60 px-4 py-3">
+                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
+                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
+                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
+                </div>
+                <img
+                  src={`/producto/${p.archivo}.webp`}
+                  alt={`Pantalla de ${p.titulo} del CRM FidCore. ${p.texto}`}
+                  width="2560"
+                  height="1600"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  class="block w-full"
+                />
+              </div>
+              <figcaption class="mt-4 flex flex-col gap-1 px-1">
+                <span class="text-base font-semibold text-white">{p.titulo}</span>
+                <span class="max-w-lectura text-sm text-slate-400">{p.texto}</span>
+              </figcaption>
+            </figure>
+          ))
+        }
+        <div class="w-[12%] shrink-0 sm:w-[20%] lg:w-[26%]" aria-hidden="true"></div>
+      </div>
+
+      <div class="mt-6 flex items-center gap-4">
+        <button
+          type="button"
+          class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
+          data-anterior
+          aria-label="Pantalla anterior"
+        >
+          <Icon name="ph:caret-left-bold" class="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
+          data-siguiente
+          aria-label="Pantalla siguiente"
+        >
+          <Icon name="ph:caret-right-bold" class="h-4 w-4" />
+        </button>
+
+        {/* Los indicadores son barras y no puntos: son también el control para
+            saltar a una pantalla, y un punto de 6px es un blanco imposible con
+            el dedo. */}
+        <div class="flex flex-1 items-center gap-2">
+          {
+            pantallas.map((p, i) => (
+              <button
+                type="button"
+                class="group h-6 flex-1 cursor-pointer border-0 bg-transparent p-0"
+                data-punto={i}
+                aria-label={`Ir a ${p.titulo}`}
+              >
+                <span class="block h-1 w-full rounded-full bg-white/10 transition-colors group-hover:bg-white/25" data-barra />
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // Carrusel sobre scroll nativo: mover es `scrollTo`, y la lámina activa se
+  // deduce de la posición real. Nada de estado propio, que es lo que se
+  // desincroniza cuando uno arrastra con el dedo y el indicador se queda donde
+  // estaba.
+  for (const raiz of document.querySelectorAll<HTMLElement>('[data-carrusel]')) {
+    const pista = raiz.querySelector<HTMLElement>('[data-pista]')
+    const laminas = [...raiz.querySelectorAll<HTMLElement>('[data-lamina]')]
+    const barras = [...raiz.querySelectorAll<HTMLElement>('[data-barra]')]
+    const anterior = raiz.querySelector<HTMLButtonElement>('[data-anterior]')
+    const siguiente = raiz.querySelector<HTMLButtonElement>('[data-siguiente]')
+    if (!pista || laminas.length === 0) continue
+
+    // Las láminas se alinean por su borde izquierdo (`snap-start`), no por el
+    // centro: con el centro, la primera y la última no se pueden centrar —no
+    // hay scroll de sobra— y quedan en una posición distinta a las del medio.
+    // Alineadas al borde, todas se ven igual y la siguiente siempre asoma a la
+    // derecha, que es lo que avisa que hay más.
+    const origen = () => laminas[0].offsetLeft
+    const posicion = (l: HTMLElement) => l.offsetLeft - origen()
+
+    const actual = () => {
+      let mejor = 0
+      let dist = Infinity
+      laminas.forEach((l, i) => {
+        const d = Math.abs(posicion(l) - pista.scrollLeft)
+        if (d < dist) {
+          dist = d
+          mejor = i
+        }
+      })
+      return mejor
+    }
+
+    const irA = (i: number) => {
+      const l = laminas[Math.max(0, Math.min(laminas.length - 1, i))]
+      pista.scrollTo({ left: posicion(l), behavior: 'smooth' })
+    }
+
+    const pintar = () => {
+      const i = actual()
+      barras.forEach((b, n) => {
+        b.classList.toggle('bg-naranja-500', n === i)
+        b.classList.toggle('bg-white/10', n !== i)
+      })
+      if (anterior) anterior.disabled = i === 0
+      if (siguiente) siguiente.disabled = i === laminas.length - 1
+    }
+
+    anterior?.addEventListener('click', () => irA(actual() - 1))
+    siguiente?.addEventListener('click', () => irA(actual() + 1))
+    raiz.querySelectorAll<HTMLButtonElement>('[data-punto]').forEach((p) =>
+      p.addEventListener('click', () => irA(Number(p.dataset.punto))),
+    )
+
+    let pendiente = 0
+    pista.addEventListener('scroll', () => {
+      cancelAnimationFrame(pendiente)
+      pendiente = requestAnimationFrame(pintar)
+    })
+    pintar()
+  }
+</script>

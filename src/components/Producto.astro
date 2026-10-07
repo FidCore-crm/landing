@@ -2,220 +2,374 @@
 import { Icon } from 'astro-icon/components'
 
 /**
- * Sección de producto: el sistema de verdad, con datos inventados.
+ * El sistema por dentro: 19 pantallas en un carrusel con profundidad.
  *
- * Las capturas NO son maquetas dibujadas: son el CRM corriendo, pixel por
- * pixel. Lo que cambia es la base — se sacan de una copia donde cada dato
- * personal fue reemplazado por uno ficticio, y se verificó POR PROGRAMA que
- * ninguna de las 716 cadenas reales de la cartera de Nahuel aparezca en ninguna
- * columna de texto. Mirar la imagen a ojo no alcanza: los datos se filtran por
- * bitácoras, correos enviados, extracciones de PDF e importaciones.
+ * Las capturas son el CRM corriendo, no maquetas. Salen de una copia de la base
+ * con todos los datos personales reemplazados por ficticios, verificada por
+ * programa contra producción: 0 coincidencias en nombre+apellido, DNI,
+ * teléfono, patente, email y número de póliza. La receta está en la memoria
+ * `tooling_capturas_crm_datos_ficticios`.
  *
- * Para rehacerlas, ver la memoria `tooling_capturas_crm_datos_ficticios`.
+ * Qué se eligió mostrar y por qué: la primera versión eran seis listados, y
+ * seis listados se parecen entre sí —tarjetas arriba, tabla abajo— así que el
+ * carrusel no mostraba el sistema, mostraba una pantalla seis veces. Ahora
+ * alterna listados con fichas, gráficos, un tablero, un calendario, un modal y
+ * las dos pantallas que ve el asegurado. Lo que se vende no es que haya una
+ * lista de pólizas: es lo que se puede hacer desde adentro de una.
  *
- * Decisiones del carrusel:
- *  · Capturadas a 2x (2880×1800) y servidas a 2560 de ancho en WebP. El texto
- *    de las tablas es chico: a 1x queda pastoso y parece una captura vieja.
- *  · Sin librería. Es scroll horizontal con `scroll-snap`, que el navegador ya
- *    hace bien: anda con el dedo, con la rueda y con las flechas, y si el JS no
- *    carga igual se puede arrastrar.
- *  · El marco de ventana no es decoración: sin él la captura flota y se lee
- *    como una imagen pegada en vez de como un producto.
- *  · Primero Pólizas, que es de lo que habla el título. El dashboard va
- *    segundo: es la pantalla que más se mira, pero sola no dice qué guarda
- *    adentro el sistema.
+ * ── El efecto 3D ──
+ *
+ * La lámina del frente está de cara al lector; las de atrás se van girando
+ * sobre el eje Y, alejándose en Z y perdiendo opacidad. Al pasar de una a otra,
+ * la que entra gira hasta quedar de frente y la que sale se va de perfil.
+ *
+ * Tres decisiones que lo hacen funcionar:
+ *
+ *  · `transform` y `opacity` solamente. Son las dos propiedades que el
+ *    navegador anima en la GPU sin recalcular layout. Animar `left` o `width`
+ *    con 19 imágenes de 2200px daría una animación a tirones.
+ *
+ *  · Sólo se montan las láminas cercanas (`VISIBLES`). Las 19 a la vez son
+ *    19 capas compuestas y el navegador las mantiene todas en memoria de
+ *    video; con tres de cada lado alcanza para que el efecto se lea y el resto
+ *    queda fuera del DOM visible.
+ *
+ *  · El índice es estado propio, no scroll. A diferencia de un carrusel plano,
+ *    acá no hay nada que scrollear: la posición de cada lámina se calcula
+ *    desde su distancia al índice activo. El arrastre con el dedo se traduce a
+ *    cambios de índice.
+ *
+ * Y `prefers-reduced-motion`: para quien pidió menos movimiento, las láminas
+ * no giran — se cambian con un fundido.
  */
 
 const pantallas = [
-  {
-    archivo: 'polizas',
-    titulo: 'Pólizas',
-    texto: 'Tu cartera entera, con el bien asegurado y los días que faltan para vencer.',
-  },
-  {
-    archivo: 'dashboard',
-    titulo: 'Dashboard',
-    texto: 'Lo que pasa hoy: lo que vence, lo que falta hacer y lo que quedó anotado.',
-  },
-  {
-    archivo: 'renovaciones',
-    titulo: 'Renovaciones',
-    texto: 'Qué vence y cuándo, ordenado por urgencia. La renovada queda encadenada a la anterior.',
-  },
-  {
-    archivo: 'siniestros',
-    titulo: 'Siniestros',
-    texto: 'Cada caso con su número propio, su estado y el registro de quién hizo qué.',
-  },
-  {
-    archivo: 'comercial-pipeline',
-    titulo: 'Tablero comercial',
-    texto: 'Lo que todavía no es póliza: leads y oportunidades con sus cotizaciones adentro.',
-  },
-  {
-    archivo: 'tareas',
-    titulo: 'Tareas',
-    texto: 'Lo que hay que hacer, con su prioridad y su vencimiento. Las que se repiten se recrean solas.',
-  },
-  {
-    archivo: 'portal',
-    titulo: 'Portal del asegurado',
-    texto: 'Lo que ve tu cliente: sus pólizas, sus papeles y sus siniestros. Entra con un link, sin contraseña.',
-  },
-  {
-    archivo: 'denuncia',
-    titulo: 'Denuncia de siniestro',
-    texto: 'Tu cliente denuncia desde el portal, con sus datos ya cargados. El caso te entra al CRM.',
-  },
+  { archivo: '01-dashboard',     titulo: 'Dashboard',              texto: 'Lo que vence hoy, lo que falta hacer y lo que quedó anotado.' },
+  { archivo: '02-analisis',      titulo: 'Análisis de cartera',    texto: 'Diez gráficos sobre tu histórico: por compañía, ramo, cobertura y medio de pago.' },
+  { archivo: '03-polizas',       titulo: 'Pólizas',                texto: 'Tu cartera entera, con el bien asegurado y los días que faltan para vencer.' },
+  { archivo: '04-poliza',        titulo: 'La póliza por dentro',   texto: 'Asegurado, coberturas contratadas y todo lo que podés hacer desde acá.' },
+  { archivo: '05-renovar-pdf',   titulo: 'Renovar desde el PDF',   texto: 'Subís la renovación que mandó la compañía y la IA compara qué cambió.' },
+  { archivo: '06-importador',    titulo: 'Importar la cartera',    texto: 'Tus planillas y PDF entran solos. El sistema te avisa de lo que duda.' },
+  { archivo: '07-renovaciones',  titulo: 'Renovaciones',           texto: 'Qué vence y cuándo, ordenado por urgencia. La renovada queda encadenada a la anterior.' },
+  { archivo: '08-cliente',       titulo: 'Ficha del cliente',      texto: 'Sus pólizas, sus siniestros, sus tareas y su portal. Todo su recorrido en un lugar.' },
+  { archivo: '09-siniestro',     titulo: 'Siniestro',              texto: 'Bitácora de seguimiento con lo que ve el asegurado y lo que queda interno.' },
+  { archivo: '10-tablero',       titulo: 'Tablero comercial',      texto: 'Lo que todavía no es póliza, moviéndose entre columnas.' },
+  { archivo: '11-lead',          titulo: 'Ficha del lead',         texto: 'El historial de lo que hablaste, con sus cotizaciones adentro.' },
+  { archivo: '12-cotizacion',    titulo: 'Cotización',             texto: 'Varias compañías comparadas lado a lado. Sale en PDF o por WhatsApp.' },
+  { archivo: '13-tareas',        titulo: 'Tareas',                 texto: 'Con prioridad y vencimiento. Las que se repiten se recrean solas.' },
+  { archivo: '14-calendario',    titulo: 'Calendario',             texto: 'Vencimientos, cupones y tareas en el mismo mes.' },
+  { archivo: '15-facturacion',   titulo: 'Facturación',            texto: 'Lo que facturaste por compañía, mes a mes.' },
+  { archivo: '16-correos',       titulo: 'Avisos automáticos',     texto: 'Cada correo que sale solo, con su interruptor. Vos decidís cuáles.' },
+  { archivo: '17-configuracion', titulo: 'Configuración',          texto: 'Quince secciones: tu marca, tus catálogos, tus usuarios, tus backups.' },
+  { archivo: '18-portal',        titulo: 'Portal del asegurado',   texto: 'Lo que ve tu cliente: sus pólizas y sus papeles. Entra con un link, sin contraseña.' },
+  { archivo: '19-denuncia',      titulo: 'Denuncia de siniestro',  texto: 'Tu cliente denuncia desde el portal, con sus datos ya cargados. El caso te entra al CRM.' },
 ]
 ---
 
-<section id="producto" class="seccion">
+<section id="producto" class="seccion seccion-carrusel">
   <div class="contenedor">
     <div class="max-w-3xl">
-      <h2 class="titulo-seccion revelar">
-        Así se ve trabajando.
-      </h2>
+      <h2 class="titulo-seccion revelar">Así se ve trabajando.</h2>
       <p class="bajada mt-5 revelar" style="transition-delay: 80ms">
-        Ocho pantallas del sistema real, desde tu cartera hasta lo que ve tu cliente.
+        Diecinueve pantallas del sistema real, desde tu cartera hasta lo que ve tu cliente.
         Los datos son de ejemplo; el sistema es el que vas a usar.
       </p>
     </div>
 
-    <div class="revelar mt-12" style="transition-delay: 160ms" data-carrusel>
+    <div
+      class="revelar mt-14"
+      style="transition-delay: 160ms"
+      data-carrusel
+      data-total={pantallas.length}
+    >
+      {/* El escenario: `perspective` es lo que convierte el rotateY en
+          profundidad y no en un achatamiento. `perspective-origin` al centro
+          para que las de los dos lados giren simétricas. */}
       <div
-        class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        data-pista
+        class="carrusel-escenario relative select-none"
+        data-escenario
+        tabindex="0"
+        role="group"
+        aria-roledescription="carrusel"
+        aria-label="Pantallas del sistema"
       >
         {
           pantallas.map((p, i) => (
-            <figure class="w-[88%] shrink-0 snap-start sm:w-[80%] lg:w-[74%]" data-lamina>
-              <div class="panel overflow-hidden">
-                <div class="flex items-center gap-1.5 border-b border-white/[0.07] bg-navy-950/60 px-4 py-3">
-                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
-                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
-                  <span class="h-2.5 w-2.5 rounded-full bg-white/15" />
+            <figure
+              class="carrusel-lamina absolute left-1/2 top-0"
+              data-lamina
+              data-indice={i}
+              aria-hidden="true"
+            >
+              <div class="panel overflow-hidden shadow-2xl shadow-navy-950/60">
+                <div class="flex items-center gap-1.5 border-b border-white/[0.07] bg-navy-950/70 px-4 py-2.5">
+                  <span class="h-2 w-2 rounded-full bg-white/15" />
+                  <span class="h-2 w-2 rounded-full bg-white/15" />
+                  <span class="h-2 w-2 rounded-full bg-white/15" />
                 </div>
                 <img
                   src={`/producto/${p.archivo}.webp`}
-                  alt={`Pantalla de ${p.titulo} del CRM FidCore. ${p.texto}`}
-                  width="2560"
-                  height="1600"
-                  loading={i === 0 ? 'eager' : 'lazy'}
+                  alt={`${p.titulo}: ${p.texto}`}
+                  width="2200"
+                  height="1375"
+                  loading={i < 3 ? 'eager' : 'lazy'}
                   decoding="async"
+                  draggable="false"
                   class="block w-full"
                 />
               </div>
-              <figcaption class="mt-4 flex flex-col gap-1 px-1">
-                <span class="text-base font-semibold text-white">{p.titulo}</span>
-                <span class="max-w-lectura text-sm text-slate-400">{p.texto}</span>
-              </figcaption>
             </figure>
           ))
         }
-        <div class="w-[12%] shrink-0 sm:w-[20%] lg:w-[26%]" aria-hidden="true"></div>
       </div>
 
-      <div class="mt-6 flex items-center gap-4">
+      {/* El texto va afuera del escenario y no adentro de cada lámina: dentro
+          se giraría con la imagen y quedaría ilegible de costado. */}
+      <div class="mt-10 min-h-[4.5rem] text-center" data-leyenda>
+        <p class="text-lg font-semibold text-white" data-leyenda-titulo>{pantallas[0].titulo}</p>
+        <p class="mx-auto mt-1.5 max-w-xl text-sm text-slate-400" data-leyenda-texto>{pantallas[0].texto}</p>
+      </div>
+
+      <div class="mt-7 flex items-center justify-center gap-5">
         <button
           type="button"
-          class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
+          class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
           data-anterior
           aria-label="Pantalla anterior"
         >
           <Icon name="ph:caret-left-bold" class="h-4 w-4" />
         </button>
+
+        <div class="flex items-center gap-1.5" data-puntos>
+          {
+            pantallas.map((p, i) => (
+              <button
+                type="button"
+                class="group grid h-6 w-3 place-items-center border-0 bg-transparent p-0"
+                data-punto={i}
+                aria-label={`Ir a ${p.titulo}`}
+              >
+                <span class="block h-1.5 w-1.5 rounded-full bg-white/15 transition-all group-hover:bg-white/40" data-pastilla />
+              </button>
+            ))
+          }
+        </div>
+
         <button
           type="button"
-          class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
+          class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-25"
           data-siguiente
           aria-label="Pantalla siguiente"
         >
           <Icon name="ph:caret-right-bold" class="h-4 w-4" />
         </button>
-
-        {/* Los indicadores son barras y no puntos: son también el control para
-            saltar a una pantalla, y un punto de 6px es un blanco imposible con
-            el dedo. */}
-        <div class="flex flex-1 items-center gap-2">
-          {
-            pantallas.map((p, i) => (
-              <button
-                type="button"
-                class="group h-6 flex-1 cursor-pointer border-0 bg-transparent p-0"
-                data-punto={i}
-                aria-label={`Ir a ${p.titulo}`}
-              >
-                <span class="block h-1 w-full rounded-full bg-white/10 transition-colors group-hover:bg-white/25" data-barra />
-              </button>
-            ))
-          }
-        </div>
       </div>
+
+      <p class="mt-5 text-center text-xs text-slate-500">
+        Arrastrá, usá las flechas del teclado o tocá una pantalla de atrás.
+      </p>
     </div>
   </div>
 </section>
 
+<style>
+  /* Las láminas de atrás asoman fuera del contenedor a propósito. En pantallas
+     anchas sobra margen, pero de 1024 para abajo se salían de la ventana y el
+     body scrolleaba de costado. `clip` y no `hidden`: hidden en un eje fuerza
+     `auto` en el otro y convertiría la sección en un contenedor de scroll
+     vertical propio. El recorte va acá y no en el escenario para no crear un
+     contexto que aplane el 3D de las láminas. */
+  .seccion-carrusel {
+    overflow-x: clip;
+  }
+
+  .carrusel-escenario {
+    /* La altura la fija el alto de una lámina (relación 2200×1375 = 0.625) más
+       lo que sobresale por la rotación. Se declara acá y no con clases porque
+       depende del ancho de la lámina, que es una variable. */
+    --ancho-lamina: min(78vw, 56rem);
+    height: calc(var(--ancho-lamina) * 0.625 + 3.5rem);
+    perspective: 2000px;
+    perspective-origin: 50% 45%;
+    cursor: grab;
+  }
+  .carrusel-escenario:active { cursor: grabbing; }
+  .carrusel-escenario:focus-visible { outline: 2px solid rgb(249 115 22 / 0.6); outline-offset: 1.25rem; border-radius: 1rem; }
+
+  .carrusel-lamina {
+    width: var(--ancho-lamina);
+    margin-left: calc(var(--ancho-lamina) / -2);
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+    transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity   520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  /* Mientras se arrastra no hay transición: la lámina tiene que seguir al dedo
+     en el mismo cuadro, si no el arrastre se siente pegajoso. */
+  .carrusel-escenario[data-arrastrando] .carrusel-lamina { transition: none; }
+
+  /* Las de atrás no reciben clicks en toda su caja —se superponen—, sólo las
+     habilita el JS en la mitad que asoma. */
+  .carrusel-lamina[data-fondo] { cursor: pointer; }
+
+  @media (max-width: 640px) {
+    .carrusel-escenario { --ancho-lamina: 88vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carrusel-lamina {
+      transition: opacity 240ms linear;
+      transform: none !important;
+    }
+    .carrusel-lamina[data-oculta] { display: none; }
+  }
+</style>
+
 <script>
-  // Carrusel sobre scroll nativo: mover es `scrollTo`, y la lámina activa se
-  // deduce de la posición real. Nada de estado propio, que es lo que se
-  // desincroniza cuando uno arrastra con el dedo y el indicador se queda donde
-  // estaba.
+  // Carrusel con profundidad. A diferencia de uno plano, acá no hay scroll: la
+  // posición de cada lámina se calcula desde su distancia al índice activo, y
+  // el arrastre se traduce a esa distancia.
   for (const raiz of document.querySelectorAll<HTMLElement>('[data-carrusel]')) {
-    const pista = raiz.querySelector<HTMLElement>('[data-pista]')
+    const escenario = raiz.querySelector<HTMLElement>('[data-escenario]')
     const laminas = [...raiz.querySelectorAll<HTMLElement>('[data-lamina]')]
-    const barras = [...raiz.querySelectorAll<HTMLElement>('[data-barra]')]
+    const pastillas = [...raiz.querySelectorAll<HTMLElement>('[data-pastilla]')]
+    const botones = [...raiz.querySelectorAll<HTMLButtonElement>('[data-punto]')]
     const anterior = raiz.querySelector<HTMLButtonElement>('[data-anterior]')
     const siguiente = raiz.querySelector<HTMLButtonElement>('[data-siguiente]')
-    if (!pista || laminas.length === 0) continue
+    const tituloEl = raiz.querySelector<HTMLElement>('[data-leyenda-titulo]')
+    const textoEl = raiz.querySelector<HTMLElement>('[data-leyenda-texto]')
+    if (!escenario || laminas.length === 0) continue
 
-    // Las láminas se alinean por su borde izquierdo (`snap-start`), no por el
-    // centro: con el centro, la primera y la última no se pueden centrar —no
-    // hay scroll de sobra— y quedan en una posición distinta a las del medio.
-    // Alineadas al borde, todas se ven igual y la siguiente siempre asoma a la
-    // derecha, que es lo que avisa que hay más.
-    const origen = () => laminas[0].offsetLeft
-    const posicion = (l: HTMLElement) => l.offsetLeft - origen()
+    const total = laminas.length
+    // Cuántas láminas de cada lado se dibujan. Las 19 a la vez son 19 capas
+    // compuestas en memoria de video; con tres alcanza para que se lea la pila.
+    const VISIBLES = 3
+    const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const actual = () => {
-      let mejor = 0
-      let dist = Infinity
-      laminas.forEach((l, i) => {
-        const d = Math.abs(posicion(l) - pista.scrollLeft)
-        if (d < dist) {
-          dist = d
-          mejor = i
+    let indice = 0
+    let arrastre = 0 // desplazamiento en "láminas" mientras se arrastra
+
+    const colocar = () => {
+      for (let i = 0; i < total; i++) {
+        const l = laminas[i]
+        const d = i - indice - arrastre
+        const lejos = Math.abs(d) > VISIBLES + 0.5
+
+        l.toggleAttribute('data-oculta', lejos)
+        if (lejos) {
+          // Fuera del rango: se saca de la pila de composición.
+          l.style.visibility = 'hidden'
+          l.style.pointerEvents = 'none'
+          continue
         }
+        l.style.visibility = 'visible'
+
+        const signo = Math.sign(d)
+        const abs = Math.abs(d)
+        // Las de atrás se juntan: el desplazamiento no es lineal, si no la
+        // tercera se iría de pantalla. La raíz las comprime hacia el centro.
+        const x = signo * Math.pow(abs, 0.78) * 30
+        const z = -abs * 190
+        const giro = signo * Math.min(abs, 2) * -34
+        const escala = 1 - Math.min(abs, 3) * 0.062
+        const opacidad = abs < 0.5 ? 1 : Math.max(0, 1 - (abs - 0.3) * 0.42)
+
+        l.style.transform = sinMovimiento
+          ? ''
+          : `translate3d(${x}%, 0, ${z}px) rotateY(${giro}deg) scale(${escala})`
+        l.style.opacity = sinMovimiento ? (abs < 0.5 ? '1' : '0') : String(opacidad)
+        l.style.zIndex = String(100 - Math.round(abs * 10))
+        // Clickear una de atrás la trae al frente; la del frente no es un
+        // botón, porque un clic ahí no tiene a dónde llevar.
+        const atras = abs >= 0.5
+        l.toggleAttribute('data-fondo', atras)
+        l.style.pointerEvents = atras ? 'auto' : 'none'
+        l.setAttribute('aria-hidden', atras ? 'true' : 'false')
+      }
+
+      pastillas.forEach((p, n) => {
+        const activa = n === indice
+        p.classList.toggle('bg-naranja-500', activa)
+        p.classList.toggle('bg-white/15', !activa)
+        p.style.width = activa ? '1.25rem' : '0.375rem'
+        p.style.borderRadius = '999px'
       })
-      return mejor
+      if (anterior) anterior.disabled = indice === 0
+      if (siguiente) siguiente.disabled = indice === total - 1
     }
 
-    const irA = (i: number) => {
-      const l = laminas[Math.max(0, Math.min(laminas.length - 1, i))]
-      pista.scrollTo({ left: posicion(l), behavior: 'smooth' })
+    const irA = (n: number) => {
+      const nuevo = Math.max(0, Math.min(total - 1, n))
+      if (nuevo === indice) return colocar()
+      indice = nuevo
+      // El texto cambia con la lámina; vive afuera del escenario porque
+      // adentro se giraría con la imagen y quedaría ilegible de costado.
+      const l = laminas[indice]
+      const img = l.querySelector('img')
+      const alt = img?.getAttribute('alt') ?? ''
+      const corte = alt.indexOf(': ')
+      if (tituloEl && corte > 0) tituloEl.textContent = alt.slice(0, corte)
+      if (textoEl && corte > 0) textoEl.textContent = alt.slice(corte + 2)
+      colocar()
     }
 
-    const pintar = () => {
-      const i = actual()
-      barras.forEach((b, n) => {
-        b.classList.toggle('bg-naranja-500', n === i)
-        b.classList.toggle('bg-white/10', n !== i)
-      })
-      if (anterior) anterior.disabled = i === 0
-      if (siguiente) siguiente.disabled = i === laminas.length - 1
-    }
+    anterior?.addEventListener('click', () => irA(indice - 1))
+    siguiente?.addEventListener('click', () => irA(indice + 1))
+    botones.forEach((b) => b.addEventListener('click', () => irA(Number(b.dataset.punto))))
+    laminas.forEach((l, i) => l.addEventListener('click', () => irA(i)))
 
-    anterior?.addEventListener('click', () => irA(actual() - 1))
-    siguiente?.addEventListener('click', () => irA(actual() + 1))
-    raiz.querySelectorAll<HTMLButtonElement>('[data-punto]').forEach((p) =>
-      p.addEventListener('click', () => irA(Number(p.dataset.punto))),
-    )
-
-    let pendiente = 0
-    pista.addEventListener('scroll', () => {
-      cancelAnimationFrame(pendiente)
-      pendiente = requestAnimationFrame(pintar)
+    escenario.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); irA(indice - 1) }
+      if (e.key === 'ArrowRight') { e.preventDefault(); irA(indice + 1) }
+      if (e.key === 'Home') { e.preventDefault(); irA(0) }
+      if (e.key === 'End') { e.preventDefault(); irA(total - 1) }
     })
-    pintar()
+
+    // ── Arrastre ──
+    // Un puntero (dedo o mouse) que recorre el ancho de una lámina mueve una
+    // posición. Mientras se arrastra se saca la transición para que siga al
+    // dedo en el mismo cuadro.
+    let inicioX = 0
+    let arrastrando = false
+    let movio = false
+
+    escenario.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button !== 0) return
+      arrastrando = true
+      movio = false
+      inicioX = e.clientX
+      escenario.setPointerCapture(e.pointerId)
+      escenario.setAttribute('data-arrastrando', '')
+    })
+
+    escenario.addEventListener('pointermove', (e) => {
+      if (!arrastrando) return
+      const dx = e.clientX - inicioX
+      if (Math.abs(dx) > 4) movio = true
+      arrastre = -dx / escenario.clientWidth * 1.6
+      // No dejar arrastrar más allá de las puntas: se siente roto.
+      if (indice + arrastre < 0) arrastre = -indice
+      if (indice + arrastre > total - 1) arrastre = total - 1 - indice
+      colocar()
+    })
+
+    const soltar = (e: PointerEvent) => {
+      if (!arrastrando) return
+      arrastrando = false
+      escenario.removeAttribute('data-arrastrando')
+      try { escenario.releasePointerCapture(e.pointerId) } catch { /* ya liberado */ }
+      const destino = Math.round(indice + arrastre)
+      arrastre = 0
+      irA(destino)
+    }
+    escenario.addEventListener('pointerup', soltar)
+    escenario.addEventListener('pointercancel', soltar)
+
+    // Un arrastre termina en un `click` sobre la lámina que quedó debajo del
+    // dedo; sin esto, soltar el arrastre saltaría dos veces.
+    escenario.addEventListener('click', (e) => { if (movio) { e.stopPropagation(); movio = false } }, true)
+
+    window.addEventListener('resize', colocar)
+    colocar()
   }
 </script>

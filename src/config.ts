@@ -30,7 +30,23 @@ export const PANEL_URL = 'https://panel.fidcore.com.ar'
  */
 export const WHATSAPP_NUMERO = ''
 
-export const EMAIL_CONTACTO = 'contacto@fidcore.com.ar'
+export const EMAIL_CONTACTO = 'info@fidcore.com.ar'
+
+/**
+ * La contratación por la página: el precio, «De la decisión a operar», el
+ * formulario con el pago por Mercado Pago y los botones que llevan ahí.
+ * Escondida hasta tener los Términos y Condiciones (pedido del PAS, 13/11/2026:
+ * «lo escondemos por el momento»). En true vuelve todo como estaba.
+ */
+export const MOSTRAR_SUSCRIPCION = false
+
+/** Correo de consulta, con el asunto puesto. */
+export const MAILTO_CONSULTA = `mailto:${EMAIL_CONTACTO}?subject=${encodeURIComponent('Consulta sobre FidCore')}`
+
+/** El botón principal: contratar si la suscripción está a la vista, consultar si no. */
+export const CTA = MOSTRAR_SUSCRIPCION
+  ? { href: '/#solicitar', texto: 'Empezar ahora' }
+  : { href: MAILTO_CONSULTA, texto: 'Consultar' }
 
 const WHATSAPP_MENSAJE = encodeURIComponent(
   'Hola, vi FidCore CRM y quiero más información.',

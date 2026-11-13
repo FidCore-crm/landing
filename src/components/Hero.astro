@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
+import { CTA } from '../config'
 
 /**
  * Hero de tipografía protagonista.
@@ -70,10 +71,17 @@ import { Icon } from 'astro-icon/components'
         El naranja concentrado en pocas palabras pesa más que repartido en media
         frase, y es lo que separa un titular caro de uno que grita.
       -->
-      <h1 class="titulo mt-7 text-d-md sm:text-d-lg lg:text-d-xl revelar" style="transition-delay: 90ms">
+      <!--
+        El H1 dice qué es, directo (pedido del PAS, 13/11/2026, con adminse
+        como referencia): quien llega tiene que saberlo antes de leer el lema.
+      -->
+      <h1 class="mt-5 text-xl font-semibold text-slate-300 sm:text-2xl revelar" style="transition-delay: 45ms">
+        Sistema de gestión para productores asesores de seguros
+      </h1>
+      <p class="titulo mt-5 text-d-md sm:text-d-lg lg:text-d-xl revelar" style="transition-delay: 90ms">
         Cargar las pólizas
         <span class="inline-block text-naranja-500">ya no es tu trabajo.</span>
-      </h1>
+      </p>
 
       <p class="bajada mt-8 revelar" style="transition-delay: 180ms">
         La IA lee el PDF y completa la ficha; vos revisás y confirmás. Clientes, pólizas,
@@ -85,8 +93,8 @@ import { Icon } from 'astro-icon/components'
         class="mt-11 flex flex-col gap-3 sm:flex-row sm:items-center revelar"
         style="transition-delay: 270ms"
       >
-        <a href="#solicitar" class="btn-primario">
-          Empezar ahora
+        <a href={CTA.href} class="btn-primario">
+          {CTA.texto}
           <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
         </a>
         <a href="#producto" class="btn-secundario">Ver el producto</a>

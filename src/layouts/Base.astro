@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css'
-import { PRECIO_TEXTO, PANEL_URL } from '../config'
+import { PRECIO_TEXTO, PANEL_URL, MOSTRAR_SUSCRIPCION } from '../config'
 
 export interface Props {
   title?: string
@@ -11,7 +11,7 @@ export interface Props {
 
 const {
   title = 'FidCore CRM, el CRM para productores de seguros argentinos',
-  description = `Clientes, pólizas, siniestros, renovaciones y comisiones en un solo lugar. La IA lee el PDF de la póliza y carga los datos sola. Desde ${PRECIO_TEXTO} por mes.`,
+  description = `Sistema de gestión para productores asesores de seguros. Clientes, pólizas, siniestros, renovaciones y comisiones en un solo lugar. La IA lee el PDF de la póliza y carga los datos sola.${MOSTRAR_SUSCRIPCION ? ` Desde ${PRECIO_TEXTO} por mes.` : ''}`,
   noindex = false,
 } = Astro.props
 
@@ -108,6 +108,8 @@ const ogImagen = new URL('/og.png', Astro.site ?? 'https://fidcore.com.ar')
       }
     </script>
 
+    <!-- Sin la suscripción a la vista no hay precio que actualizar: la página no le consulta nada al panel. -->
+    {MOSTRAR_SUSCRIPCION && (
     <script define:vars={{ PANEL_URL, PRECIO_TEXTO }}>
       /**
        * El precio que se anuncia sale del panel, que es el que cobra.
@@ -147,5 +149,6 @@ const ogImagen = new URL('/og.png', Astro.site ?? 'https://fidcore.com.ar')
           // muestra el precio compilado: no hay nada que avisarle al visitante.
         })
     </script>
+    )}
   </body>
 </html>

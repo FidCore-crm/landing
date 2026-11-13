@@ -1,0 +1,144 @@
+---
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import { EMAIL_CONTACTO } from '../config'
+
+/**
+ * Política de privacidad. La pide Google para publicar el registro de FidCore
+ * con el que cada instalación sube sus backups a Drive: tiene que estar en el
+ * mismo dominio que la portada y decir con precisión qué hace la aplicación
+ * con los datos de Google.
+ *
+ * Sin nombre, CUIT ni domicilio: decisión del PAS (13/11/2026, «en la pagina
+ * no puede haber nada de todo esto»). Sin lista de servicios de terceros:
+ * Google no la pide, y los datos de Google no se comparten con nadie.
+ */
+const actualizada = '13 de noviembre de 2026'
+const politicaGoogle = 'https://developers.google.com/terms/api-services-user-data-policy'
+---
+
+<Base
+  title="Política de privacidad | FidCore"
+  description="Qué datos trata FidCore CRM, para qué, y qué hace con la cuenta de Google Drive donde guarda las copias de seguridad."
+  noindex={true}
+>
+  <Nav />
+  <main id="contenido" class="contenedor py-16 sm:py-20">
+    <article class="mx-auto max-w-3xl">
+      <h1 class="titulo text-d-sm sm:text-d-md">Política de privacidad</h1>
+      <p class="mt-4 text-sm text-slate-500">Última actualización: {actualizada}</p>
+
+      <p class="texto-legal mt-8">
+        FidCore CRM es un sistema de gestión para productores asesores de seguros (PAS), que se
+        contrata por suscripción. Esta política explica qué datos trata FidCore, para qué y con
+        quién se comparten.
+      </p>
+
+      <h2 class="subtitulo-legal">De quién son los datos</h2>
+      <ul class="lista-legal">
+        <li>
+          El PAS carga en el sistema los datos de sus clientes: asegurados, pólizas, siniestros y
+          documentos. Esos datos son del PAS, que decide qué carga y para qué los usa. FidCore los
+          trata sólo para prestarle el servicio, por cuenta de él.
+        </li>
+        <li>
+          FidCore trata además los datos de contacto del PAS que contrata (nombre, correo y
+          teléfono), para administrar la suscripción y darle soporte.
+        </li>
+      </ul>
+
+      <h2 class="subtitulo-legal">Dónde se guardan</h2>
+      <p class="texto-legal">
+        Cada estudio funciona en su propio servidor, separado del de otros PAS. Se accede por
+        conexión cifrada, con usuario y contraseña, y con permisos por usuario.
+      </p>
+
+      <h2 class="subtitulo-legal">Google Drive (copias de seguridad)</h2>
+      <p class="texto-legal">
+        El sistema guarda una copia de seguridad diaria en una cuenta de Google Drive del estudio.
+        Para eso le pide a Google acceso sólo a los archivos que crea el propio sistema:
+      </p>
+      <ul class="lista-legal">
+        <li>
+          Crea y administra únicamente la carpeta <code>fidcore-backups</code> y su contenido: la
+          base de datos del estudio y sus documentos.
+        </li>
+        <li>No puede ver, leer ni modificar ningún otro archivo de esa cuenta.</li>
+        <li>La autorización queda guardada sólo en el servidor del estudio.</li>
+        <li>
+          El acceso se usa únicamente para guardar y restaurar las copias de seguridad del estudio.
+          Los datos no se venden ni se comparten con terceros, y no se usan para publicidad ni para
+          entrenar modelos de inteligencia artificial.
+        </li>
+        <li>Las copias se conservan 30 días; los documentos vigentes, mientras sigan en el sistema.</li>
+        <li>
+          El acceso se puede quitar en cualquier momento desde la cuenta de Google: Seguridad → Apps
+          de terceros con acceso a tu cuenta → FidCore. Desde ese momento el sistema deja de subir
+          las copias a Drive.
+        </li>
+      </ul>
+      <p class="texto-legal">
+        El uso que hace FidCore de la información recibida de las API de Google cumple la
+        <a href={politicaGoogle} rel="noopener" class="enlace-legal"
+          >Política de Datos del Usuario de los Servicios de API de Google</a
+        >, incluidos los requisitos de Uso Limitado.
+      </p>
+
+      <h2 class="subtitulo-legal">Lo que FidCore recibe de cada estudio</h2>
+      <p class="texto-legal">
+        Para mantener el servicio, cada sistema informa a FidCore datos técnicos: la versión
+        instalada, el estado del servicio, la fecha del último backup y el espacio en disco. No
+        incluye datos de clientes.
+      </p>
+
+      <h2 class="subtitulo-legal">Esta página</h2>
+      <p class="texto-legal">fidcore.com.ar no usa cookies ni herramientas de seguimiento.</p>
+
+      <h2 class="subtitulo-legal">Baja del servicio</h2>
+      <p class="texto-legal">
+        Si el PAS se da de baja, se le entrega un respaldo con toda su información y se elimina la
+        instalación por completo.
+      </p>
+
+      <h2 class="subtitulo-legal">Derechos</h2>
+      <p class="texto-legal">
+        El PAS puede pedir acceso, corrección o eliminación de sus datos escribiendo a
+        <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>. Los clientes
+        de un PAS deben dirigirse a su productor, que es quien administra sus datos.
+      </p>
+      <p class="texto-legal">
+        La Agencia de Acceso a la Información Pública, en su carácter de órgano de control de la Ley
+        25.326, tiene la atribución de atender las denuncias y reclamos de quienes resulten afectados
+        en sus derechos por incumplimiento de las normas de protección de datos personales.
+      </p>
+
+      <h2 class="subtitulo-legal">Cambios</h2>
+      <p class="texto-legal">Si esta política cambia, se publica en esta página con la nueva fecha.</p>
+
+      <h2 class="subtitulo-legal">Contacto</h2>
+      <p class="texto-legal">
+        <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>
+      </p>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .texto-legal {
+    @apply mt-4 text-base leading-relaxed text-slate-300;
+  }
+  .subtitulo-legal {
+    @apply mt-12 text-xl font-semibold text-white;
+  }
+  .lista-legal {
+    @apply mt-4 list-disc space-y-2.5 pl-5 text-base leading-relaxed text-slate-300 marker:text-naranja-500;
+  }
+  .enlace-legal {
+    @apply text-naranja-400 underline underline-offset-4 hover:text-naranja-300;
+  }
+  code {
+    @apply rounded bg-white/[0.07] px-1.5 py-0.5 font-mono text-sm text-slate-200;
+  }
+</style>

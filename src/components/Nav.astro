@@ -1,11 +1,13 @@
 ---
 import { Icon } from 'astro-icon/components'
+import { CTA, MOSTRAR_SUSCRIPCION } from '../config'
 
+// Con «/» adelante, para que también lleven a la portada desde /privacidad.
 const enlaces = [
-  { href: '#producto', texto: 'Producto' },
-  { href: '#funciones', texto: 'Funciones' },
-  { href: '#precio', texto: 'Precio' },
-  { href: '#preguntas', texto: 'Preguntas' },
+  { href: '/#producto', texto: 'Producto' },
+  { href: '/#funciones', texto: 'Funciones' },
+  ...(MOSTRAR_SUSCRIPCION ? [{ href: '/#precio', texto: 'Precio' }] : []),
+  { href: '/#preguntas', texto: 'Preguntas' },
 ]
 ---
 
@@ -29,8 +31,8 @@ const enlaces = [
       <div class="flex items-center gap-2">
         <!-- De contorno a propósito: el único naranja lleno de la primera
              pantalla es el CTA del hero. Dos botones naranjas compiten. -->
-        <a href="#solicitar" class="hidden btn-secundario !px-4 !py-2 !text-sm sm:inline-flex">
-          Empezar ahora
+        <a href={CTA.href} class="hidden btn-secundario !px-4 !py-2 !text-sm sm:inline-flex">
+          {CTA.texto}
         </a>
 
         <button
@@ -61,7 +63,7 @@ const enlaces = [
           </a>
         ))
       }
-      <a href="#solicitar" data-cerrar-menu class="btn-primario mt-2">Empezar ahora</a>
+      <a href={CTA.href} data-cerrar-menu class="btn-primario mt-2">{CTA.texto}</a>
     </div>
   </div>
 </header>

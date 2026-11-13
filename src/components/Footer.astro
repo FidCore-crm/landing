@@ -1,5 +1,5 @@
 ---
-import { EMAIL_CONTACTO, WHATSAPP_LINK } from '../config'
+import { CTA, EMAIL_CONTACTO, MOSTRAR_SUSCRIPCION, WHATSAPP_LINK } from '../config'
 
 const anio = new Date().getFullYear()
 
@@ -7,17 +7,22 @@ const secciones = [
   {
     titulo: 'Producto',
     enlaces: [
-      { href: '#producto', texto: 'Qué hace' },
-      { href: '#precio', texto: 'Precio' },
-      { href: '#preguntas', texto: 'Preguntas' },
+      { href: '/#producto', texto: 'Qué hace' },
+      { href: '/#funciones', texto: 'Funciones' },
+      ...(MOSTRAR_SUSCRIPCION ? [{ href: '/#precio', texto: 'Precio' }] : []),
+      { href: '/#preguntas', texto: 'Preguntas' },
     ],
+  },
+  {
+    titulo: 'FidCore',
+    enlaces: [{ href: '/privacidad', texto: 'Política de privacidad' }],
   },
   {
     titulo: 'Contacto',
     enlaces: [
       { href: `mailto:${EMAIL_CONTACTO}`, texto: EMAIL_CONTACTO },
       ...(WHATSAPP_LINK ? [{ href: WHATSAPP_LINK, texto: 'WhatsApp' }] : []),
-      { href: '#solicitar', texto: 'Empezar ahora' },
+      ...(MOSTRAR_SUSCRIPCION ? [{ href: CTA.href, texto: CTA.texto }] : []),
     ],
   },
 ]
@@ -25,7 +30,7 @@ const secciones = [
 
 <footer class="border-t border-white/[0.08] bg-navy-900">
   <div class="contenedor py-14">
-    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
       <div>
         <img src="/branding/fidcore-logo.svg" alt="FidCore" width="113" height="30" class="h-[30px] w-auto" />
         <p class="mt-4 max-w-xs text-sm text-slate-400">

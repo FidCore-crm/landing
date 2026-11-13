@@ -1,0 +1,59 @@
+---
+/**
+ * Franja de cifras debajo de la portada (fase 2). Sólo datos ciertos del
+ * producto: FidCore no tiene cifras de usuarios para mostrar, y no se inventan.
+ * Los números suben desde cero al aparecer; con «reducir movimiento», quietos.
+ */
+const cifras = [
+  { numero: 12, sufijo: '', texto: 'áreas integradas en un solo sistema' },
+  { numero: 48, sufijo: ' h', texto: 'desde la contratación hasta tenerlo operativo' },
+  { numero: 1, sufijo: '', texto: 'servidor propio para cada productor' },
+  { numero: null, palabra: 'Diaria', texto: 'copia de seguridad en tu Google Drive' },
+]
+---
+
+<section class="relative border-b border-white/[0.06]">
+  <div class="contenedor grid grid-cols-2 gap-x-6 gap-y-10 py-12 lg:grid-cols-4 lg:py-14">
+    {
+      cifras.map((c, i) => (
+        <div class="revelar" style={`transition-delay: ${i * 70}ms`}>
+          <p class="titulo text-d-sm sm:text-d-md">
+            {c.numero === null ? (
+              c.palabra
+            ) : (
+              <>
+                <span data-contar={c.numero}>{c.numero}</span>
+                {c.sufijo && <span class="text-naranja-500">{c.sufijo}</span>}
+              </>
+            )}
+          </p>
+          <p class="mt-2 max-w-[16rem] text-sm text-slate-400">{c.texto}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const numeros = document.querySelectorAll<HTMLElement>('[data-contar]')
+  if (!quieto && 'IntersectionObserver' in window) {
+    numeros.forEach((el) => {
+      const final = Number(el.dataset.contar)
+      el.textContent = '0'
+      new IntersectionObserver((entradas, obs) => {
+        if (!entradas[0]?.isIntersecting) return
+        obs.disconnect()
+        const inicio = performance.now()
+        const duracion = 1200
+        const paso = (t: number) => {
+          const avance = Math.min(1, (t - inicio) / duracion)
+          const suave = 1 - Math.pow(1 - avance, 3)
+          el.textContent = String(Math.round(final * suave))
+          if (avance < 1) requestAnimationFrame(paso)
+        }
+        requestAnimationFrame(paso)
+      }, { threshold: 0.6 }).observe(el)
+    })
+  }
+</script>

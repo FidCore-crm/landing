@@ -1,34 +1,57 @@
 ---
 import { Icon } from 'astro-icon/components'
 import { CTA } from '../config'
+import RedParticulas from './RedParticulas.astro'
 
 /**
- * Hero de tipografía protagonista.
+ * Portada. Fase 2 (13/11/2026): el PAS pidió un aspecto moderno como el de
+ * adminse.com.ar, en los colores de FidCore. A la izquierda el texto; a la
+ * derecha, tarjetas con avisos del sistema (datos de ejemplo) en cascada. De
+ * fondo, una red de puntos conectados (RedParticulas). La F armada con
+ * partículas se descartó: «queda exactamente igual que al de adminse».
  *
- * Decisiones para que se lea premium y no como plantilla de SaaS:
- *  - El gradiente de marca queda contenido: la mayor parte del cuadro es navy
- *    profundo y el azul claro solo asoma abajo a la derecha. Un lavado diagonal
- *    de punta a punta aclara todo y abarata.
- *  - El naranja aparece en dos lugares nada más: el botón y tres palabras del
- *    titular. Concentrado pesa más que repartido.
- *  - Aire generoso arriba y abajo, sin llegar a que el contenido flote.
- *
- * NO lleva captura de producto: la captura real del CRM va en la sección
- * "producto". Armar una UI falsa con divs sería el recurso más gastado del
- * diseño hecho por IA.
- *
- * El H1 lidera con la carga por IA: es el diferencial real y es lo que el PAS
- * eligió como lo que más le vende, junto con el portal del asegurado y que
- * esté todo en un sistema — esos dos los levanta la bajada.
- *
- * El titular anterior era «Ninguna póliza se te vence sin que lo sepas», que
- * vende los vencimientos: la única de las cuatro opciones que NO eligió.
- *
- * No repite a las otras secciones: «Arrastrás el PDF. Ya está cargada» es de
- * Features y «Toda tu cartera en una pantalla» es de Producto. Tres titulares
- * diciendo lo mismo con distintas palabras es lo que hace que una landing se
- * lea como relleno.
+ *  - El H1 dice qué es, directo (pedido del PAS): quien llega tiene que
+ *    saberlo antes de leer el lema.
+ *  - El naranja sigue concentrado: el botón, media frase del titular y los
+ *    nodos que laten en la red.
+ *  - Las tarjetas sólo en pantallas anchas: en el teléfono alargaban la
+ *    portada sin sumar.
  */
+
+const avisos = [
+  {
+    icono: 'ph:sparkle-fill',
+    titulo: 'Póliza cargada con IA',
+    detalle: 'Automotores · Todo riesgo',
+    cuando: 'ahora',
+    lugar: 'left-[4%] top-[6%]',
+    demora: '0s',
+  },
+  {
+    icono: 'ph:calendar-check-fill',
+    titulo: 'Vencimientos de la semana',
+    detalle: '14 pólizas por renovar',
+    cuando: 'hoy',
+    lugar: 'right-0 top-[29%]',
+    demora: '1.2s',
+  },
+  {
+    icono: 'ph:shield-check-fill',
+    titulo: 'Siniestro actualizado',
+    detalle: 'Inspección aprobada',
+    cuando: 'hace 5 min',
+    lugar: 'left-0 top-[52%]',
+    demora: '2.1s',
+  },
+  {
+    icono: 'ph:percent-bold',
+    titulo: 'Comisiones de octubre',
+    detalle: 'Liquidación calculada',
+    cuando: 'hace 1 h',
+    lugar: 'right-[7%] top-[75%]',
+    demora: '0.6s',
+  },
+]
 ---
 
 <section class="relative isolate overflow-hidden">
@@ -37,67 +60,78 @@ import { CTA } from '../config'
     gradientes. Una base más oscura acá dejaba una costura horizontal visible
     donde terminaba la sección.
   -->
-
-  <!-- Gradiente de marca, contenido en la esquina inferior derecha. -->
   <div
     class="absolute inset-0"
     style="background: radial-gradient(120% 130% at 88% 118%, #2A4A7A 0%, #1E3A5F 32%, rgba(10,22,40,0) 68%)"
     aria-hidden="true"
   >
   </div>
-
-  <!-- Luz tenue detrás del titular, para que el texto no quede sobre un plano muerto. -->
+  <!-- Resplandor naranja muy tenue detrás de las tarjetas. -->
+  <div
+    class="absolute inset-0"
+    style="background: radial-gradient(38% 45% at 74% 46%, rgba(255,106,0,0.10) 0%, rgba(10,22,40,0) 70%)"
+    aria-hidden="true"
+  >
+  </div>
   <div
     class="absolute inset-0"
     style="background: radial-gradient(70% 55% at 12% 24%, rgba(42,74,122,0.4) 0%, rgba(10,22,40,0) 62%)"
     aria-hidden="true"
   >
   </div>
+  <RedParticulas />
 
-  <!-- Textura de puntos del login del CRM, misma escala. -->
-  <div
-    class="absolute inset-0 opacity-[0.045]"
-    style="background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 80% 70%, white 1px, transparent 1px); background-size: 60px 60px, 90px 90px"
-    aria-hidden="true"
-  >
-  </div>
+  <div class="contenedor relative pb-16 pt-16 lg:pb-24 lg:pt-20">
+    <div class="grid items-center gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10">
+      <div>
+        <p class="eyebrow revelar">Carga de pólizas con inteligencia artificial</p>
 
-  <div class="contenedor relative pb-28 pt-24 lg:pb-40 lg:pt-28">
-    <div class="max-w-4xl">
-      <p class="eyebrow revelar">Carga de pólizas con inteligencia artificial</p>
+        <h1 class="mt-5 text-balance text-xl font-semibold text-slate-300 sm:text-2xl revelar" style="transition-delay: 45ms">
+          Sistema de gestión para productores asesores de seguros
+        </h1>
+        <p class="titulo mt-5 text-d-md sm:text-d-lg revelar" style="transition-delay: 90ms">
+          Toda tu cartera,
+          <span class="inline-block text-naranja-500">en un solo sistema.</span>
+        </p>
 
-      <!--
-        Patrón del titular: todo blanco y UNA sola pieza corta en naranja.
-        El naranja concentrado en pocas palabras pesa más que repartido en media
-        frase, y es lo que separa un titular caro de uno que grita.
-      -->
-      <!--
-        El H1 dice qué es, directo (pedido del PAS, 13/11/2026, con adminse
-        como referencia): quien llega tiene que saberlo antes de leer el lema.
-      -->
-      <h1 class="mt-5 text-xl font-semibold text-slate-300 sm:text-2xl revelar" style="transition-delay: 45ms">
-        Sistema de gestión para productores asesores de seguros
-      </h1>
-      <p class="titulo mt-5 text-d-md sm:text-d-lg lg:text-d-xl revelar" style="transition-delay: 90ms">
-        Toda tu cartera,
-        <span class="inline-block text-naranja-500">en un solo sistema.</span>
-      </p>
+        <p class="bajada mt-7 revelar" style="transition-delay: 180ms">
+          Pólizas, renovaciones, siniestros, cupones de pago, gestión comercial y comisiones,
+          integrados. La inteligencia artificial carga las pólizas desde el PDF y tus asegurados
+          consultan su documentación desde su propio portal.
+        </p>
 
-      <p class="bajada mt-8 revelar" style="transition-delay: 180ms">
-        Pólizas, renovaciones, siniestros, cupones de pago, gestión comercial y comisiones,
-        integrados. La inteligencia artificial carga las pólizas desde el PDF y tus asegurados
-        consultan su documentación desde su propio portal.
-      </p>
+        <div
+          class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center revelar"
+          style="transition-delay: 270ms"
+        >
+          <a href={CTA.href} class="btn-primario">
+            {CTA.texto}
+            <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
+          </a>
+          <a href="#producto" class="btn-secundario">Ver el sistema</a>
+        </div>
+      </div>
 
-      <div
-        class="mt-11 flex flex-col gap-3 sm:flex-row sm:items-center revelar"
-        style="transition-delay: 270ms"
-      >
-        <a href={CTA.href} class="btn-primario">
-          {CTA.texto}
-          <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
-        </a>
-        <a href="#producto" class="btn-secundario">Ver el sistema</a>
+      <div class="relative hidden h-[480px] lg:block">
+        {
+          avisos.map((a) => (
+            <div
+              class:list={['aviso-flotante absolute flex', a.lugar]}
+              style={`animation-delay: ${a.demora}`}
+            >
+              <span class="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-naranja-500/15 text-naranja-400">
+                <Icon name={a.icono} class="h-[18px] w-[18px]" />
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="flex items-baseline justify-between gap-3">
+                  <span class="whitespace-nowrap text-[13px] font-semibold text-white">{a.titulo}</span>
+                  <span class="whitespace-nowrap font-mono text-2xs text-slate-500">{a.cuando}</span>
+                </span>
+                <span class="mt-0.5 block text-xs text-slate-400">{a.detalle}</span>
+              </span>
+            </div>
+          ))
+        }
       </div>
     </div>
   </div>
@@ -105,3 +139,27 @@ import { CTA } from '../config'
   <!-- Cierre inferior: filete que separa el hero sin cortar con una línea dura. -->
   <div class="filete absolute bottom-0 left-0 right-0" aria-hidden="true"></div>
 </section>
+
+<style>
+  .aviso-flotante {
+    @apply w-[268px] items-center gap-3 rounded-panel border border-white/10 px-3 py-2.5;
+    background: rgba(13, 27, 49, 0.72);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px -18px rgba(3, 8, 18, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    animation: flotar 7s ease-in-out infinite;
+  }
+  @keyframes flotar {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-9px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aviso-flotante {
+      animation: none;
+    }
+  }
+</style>

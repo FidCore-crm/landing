@@ -1,0 +1,315 @@
+---
+import { Icon } from 'astro-icon/components'
+
+/**
+ * El importador con IA, mostrado funcionando (fase 2). Una maqueta animada:
+ * el PDF se analiza, la ficha se completa campo por campo, el sistema marca
+ * un dato a revisar y queda listo para aprobar. Los textos son los de la
+ * pantalla real del CRM («Analizando PDF de póliza», «Extrayendo datos»,
+ * «Aprobar y crear póliza»), no los de otra marca.
+ *
+ * Los campos salen de `DatosExtraidosPoliza` (src/lib/agente-pdf/types.ts del
+ * CRM): no agregar uno que el sistema no extraiga. Datos de ejemplo.
+ *
+ * Sólo anima a la vista; con «reducir movimiento» queda quieta en el final.
+ */
+
+const pasos = [
+  { titulo: 'Subís el PDF', texto: 'La póliza o la renovación que envía la compañía.' },
+  {
+    titulo: 'La inteligencia artificial lo lee',
+    texto: 'Completa asegurado, coberturas, vigencia, suma asegurada y datos del riesgo.',
+  },
+  { titulo: 'Revisás y confirmás', texto: 'El sistema señala los datos a revisar antes de crear la póliza.' },
+]
+
+const campos = [
+  { etiqueta: 'Asegurado', valor: 'Lucía Fernández' },
+  { etiqueta: 'Compañía', valor: 'Compañía de ejemplo' },
+  { etiqueta: 'Número de póliza', valor: '01-2045873', mono: true },
+  { etiqueta: 'Cobertura', valor: 'Todo riesgo con franquicia' },
+  { etiqueta: 'Vigencia', valor: '01/12/2026 al 01/12/2027', mono: true },
+  { etiqueta: 'Suma asegurada', valor: '$ 28.400.000', mono: true },
+  { etiqueta: 'Medio de pago', valor: 'Débito automático' },
+  { etiqueta: 'Datos del riesgo', valor: 'VW Polo 2023 · AE 512 KD', revisar: true },
+]
+
+const extraidos = [
+  'Asegurado',
+  'Tomador',
+  'Domicilio',
+  'Compañía',
+  'Cobertura',
+  'Número de póliza',
+  'Vigencia',
+  'Moneda',
+  'Suma asegurada',
+  'Medio de pago',
+  'Refacturación',
+  'Datos del riesgo',
+]
+---
+
+<section id="importador" class="seccion">
+  <div class="contenedor grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+    <div>
+      <p class="eyebrow revelar">Importador con inteligencia artificial</p>
+      <h2 class="titulo-seccion mt-4 revelar" style="transition-delay: 70ms">
+        La póliza se carga desde el PDF.
+      </h2>
+      <p class="bajada mt-5 revelar" style="transition-delay: 140ms">
+        La inteligencia artificial lee la póliza y completa la ficha. Vos revisás y confirmás. La
+        carga manual está siempre disponible.
+      </p>
+
+      <ol class="mt-9 grid gap-2" data-ia-pasos>
+        {
+          pasos.map((p, i) => (
+            <li class="paso-ia revelar" data-paso={i} style={`transition-delay: ${200 + i * 70}ms`}>
+              <span class="numero-paso">{i + 1}</span>
+              <span>
+                <span class="block font-semibold text-white">{p.titulo}</span>
+                <span class="mt-0.5 block text-sm text-slate-400">{p.texto}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="mt-9 font-mono text-2xs uppercase tracking-[0.14em] text-slate-500 revelar">Datos que extrae</p>
+      <ul class="mt-3 flex flex-wrap gap-2 revelar">
+        {
+          extraidos.map((c) => (
+            <li class="rounded-pill border border-white/10 bg-navy-950/50 px-2.5 py-1 font-mono text-2xs text-slate-300">
+              {c}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- La maqueta -->
+    <div class="revelar" style="transition-delay: 120ms">
+      <div class="maqueta-ia" data-ia-demo>
+        <div class="flex items-center gap-2 border-b border-white/[0.07] px-4 py-3">
+          <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+          <span class="ml-3 text-xs text-slate-400">Pólizas <span class="text-slate-600">/</span> <span class="text-slate-200">Nueva desde PDF</span></span>
+        </div>
+
+        <div class="grid gap-4 p-4 sm:grid-cols-[150px_1fr] sm:p-5">
+          <!-- El PDF -->
+          <div class="pdf-ia hidden sm:block" aria-hidden="true">
+            <div class="h-2 w-16 rounded bg-slate-300"></div>
+            <div class="mt-1.5 h-1.5 w-24 rounded bg-slate-200"></div>
+            <div class="mt-4 grid gap-1.5">
+              {Array.from({ length: 14 }, (_, i) => (
+                <div class="h-1.5 rounded bg-slate-200" style={`width: ${55 + ((i * 37) % 45)}%`}></div>
+              ))}
+            </div>
+            <div class="barrido-ia" data-ia-barrido></div>
+            <p class="mt-4 font-mono text-[9px] text-slate-400">poliza-fernandez.pdf</p>
+          </div>
+
+          <!-- La ficha -->
+          <div>
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-sm font-semibold text-white">Nueva póliza</p>
+              <p class="flex items-center gap-1.5 text-2xs text-naranja-400" data-ia-estado>
+                <span class="punto-ia"></span>
+                <span data-ia-estado-texto>Analizando PDF de póliza</span>
+              </p>
+            </div>
+            <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {
+                campos.map((c, i) => (
+                  <div class="campo-ia" data-ia-campo={i} data-revisar={c.revisar ? 'si' : undefined}>
+                    <span class="flex items-center justify-between gap-2">
+                      <span class="text-[10px] uppercase tracking-wide text-slate-500">{c.etiqueta}</span>
+                      {c.revisar && <span class="aviso-revisar">A revisar</span>}
+                    </span>
+                    <span class="relative mt-1 block h-5">
+                      <span class="esqueleto-ia" />
+                      <span class:list={['valor-ia', c.mono && 'font-mono']}>{c.valor}</span>
+                    </span>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="mt-4 flex items-center justify-between gap-3">
+              <p class="text-2xs text-slate-500">Datos de ejemplo</p>
+              <span class="boton-ia" data-ia-boton>
+                <Icon name="ph:check-bold" class="h-3.5 w-3.5" /> Aprobar y crear póliza
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="toast-ia" data-ia-toast>
+          <Icon name="ph:check-circle-fill" class="h-4 w-4 text-emerald-400" /> Póliza creada
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .paso-ia {
+    @apply flex items-start gap-3.5 rounded-panel border border-transparent px-3.5 py-3 transition-all duration-500;
+    opacity: 0.55;
+  }
+  .paso-ia.activo {
+    @apply border-white/10 bg-white/[0.035];
+    opacity: 1;
+  }
+  .numero-paso {
+    @apply mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/15 font-mono text-xs text-slate-300 transition-colors duration-500;
+  }
+  .paso-ia.activo .numero-paso {
+    @apply border-naranja-500 bg-naranja-500 text-white;
+  }
+  .maqueta-ia {
+    @apply relative overflow-hidden rounded-panel border border-white/10;
+    background: linear-gradient(160deg, rgba(20, 39, 70, 0.92), rgba(10, 22, 40, 0.95));
+    box-shadow: 0 40px 80px -40px rgba(3, 8, 18, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  .pdf-ia {
+    @apply relative overflow-hidden rounded-lg bg-white p-3.5;
+    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.6);
+  }
+  .barrido-ia {
+    @apply pointer-events-none absolute left-0 right-0 h-8 opacity-0;
+    top: 0;
+    background: linear-gradient(180deg, rgba(255, 106, 0, 0), rgba(255, 106, 0, 0.28), rgba(255, 106, 0, 0));
+  }
+  .campo-ia {
+    @apply rounded-control border border-white/[0.08] bg-navy-950/50 px-3 py-2 transition-all duration-500;
+  }
+  .campo-ia.lleno {
+    @apply border-white/15;
+  }
+  .campo-ia.lleno[data-revisar] {
+    @apply border-amber-400/70;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
+  }
+  .aviso-revisar {
+    @apply rounded-pill bg-amber-400/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-300 opacity-0 transition-opacity duration-500;
+  }
+  .campo-ia.lleno .aviso-revisar {
+    opacity: 1;
+  }
+  .esqueleto-ia {
+    @apply absolute inset-y-1 left-0 w-3/4 rounded bg-white/[0.07] transition-opacity duration-300;
+  }
+  .valor-ia {
+    @apply absolute inset-0 truncate text-[13px] text-white opacity-0 transition-opacity duration-500;
+  }
+  .campo-ia.lleno .esqueleto-ia {
+    opacity: 0;
+  }
+  .campo-ia.lleno .valor-ia {
+    opacity: 1;
+  }
+  .punto-ia {
+    @apply h-1.5 w-1.5 rounded-full bg-naranja-500;
+    animation: latido 1.2s ease-in-out infinite;
+  }
+  .boton-ia {
+    @apply inline-flex items-center gap-1.5 rounded-control bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-500 transition-all duration-500;
+  }
+  .boton-ia.listo {
+    @apply bg-naranja-500 text-white;
+    box-shadow: 0 8px 24px -8px rgba(255, 106, 0, 0.7);
+  }
+  .toast-ia {
+    @apply absolute bottom-4 left-1/2 flex -translate-x-1/2 translate-y-3 items-center gap-2 rounded-pill border border-white/10 bg-navy-900/95 px-3.5 py-2 text-xs font-semibold text-white opacity-0 transition-all duration-500;
+  }
+  .toast-ia.visible {
+    @apply translate-y-0 opacity-100;
+  }
+  @keyframes latido {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  const demo = document.querySelector<HTMLElement>('[data-ia-demo]')
+  const pasos = document.querySelectorAll<HTMLElement>('[data-paso]')
+  if (demo) {
+    const campos = demo.querySelectorAll<HTMLElement>('[data-ia-campo]')
+    const barrido = demo.querySelector<HTMLElement>('[data-ia-barrido]')
+    const estado = demo.querySelector<HTMLElement>('[data-ia-estado-texto]')
+    const boton = demo.querySelector<HTMLElement>('[data-ia-boton]')
+    const toast = demo.querySelector<HTMLElement>('[data-ia-toast]')
+    const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const espera = (ms: number) => new Promise((r) => setTimeout(r, ms))
+    const marcarPaso = (n: number) => pasos.forEach((p, i) => p.classList.toggle('activo', i === n))
+
+    const final = () => {
+      campos.forEach((c) => c.classList.add('lleno'))
+      boton?.classList.add('listo')
+      if (estado) estado.textContent = 'Listo para revisar'
+      marcarPaso(2)
+    }
+
+    let visible = false
+    let enMarcha = false
+
+    async function ciclo() {
+      if (enMarcha) return
+      enMarcha = true
+      while (visible) {
+        campos.forEach((c) => c.classList.remove('lleno'))
+        boton?.classList.remove('listo')
+        toast?.classList.remove('visible')
+        if (estado) estado.textContent = 'Analizando PDF de póliza'
+        marcarPaso(0)
+        await espera(1300)
+
+        marcarPaso(1)
+        if (barrido) {
+          barrido.style.transition = 'none'
+          barrido.style.top = '0px'
+          barrido.style.opacity = '1'
+          void barrido.offsetHeight
+          barrido.style.transition = `top ${campos.length * 0.45}s linear`
+          barrido.style.top = 'calc(100% - 32px)'
+        }
+        if (estado) estado.textContent = 'Extrayendo datos'
+        for (const c of campos) {
+          await espera(450)
+          c.classList.add('lleno')
+        }
+        if (barrido) barrido.style.opacity = '0'
+
+        marcarPaso(2)
+        if (estado) estado.textContent = 'Listo para revisar'
+        await espera(700)
+        boton?.classList.add('listo')
+        await espera(1600)
+        toast?.classList.add('visible')
+        await espera(2600)
+      }
+      enMarcha = false
+    }
+
+    if (quieto || !('IntersectionObserver' in window)) {
+      final()
+    } else {
+      new IntersectionObserver(
+        (entradas) => {
+          visible = entradas[0]?.isIntersecting ?? false
+          if (visible) ciclo()
+        },
+        { threshold: 0.35 },
+      ).observe(demo)
+    }
+  }
+</script>

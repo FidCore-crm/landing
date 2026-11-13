@@ -1,0 +1,80 @@
+---
+/**
+ * Fondo de partículas tenue para toda la portada (fase 2): da continuidad a la
+ * F de la portada sin competir con el contenido. Pocas partículas, lentas y
+ * casi transparentes. Sin animación con «reducir movimiento»; se pausa con la
+ * pestaña oculta.
+ */
+---
+
+<canvas
+  data-fondo-particulas
+  class="pointer-events-none fixed inset-0 -z-10 h-full w-full"
+  aria-hidden="true"
+></canvas>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-fondo-particulas]')
+  const ctx = canvas?.getContext('2d')
+  if (canvas && ctx && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const telefono = matchMedia('(max-width: 767px)').matches
+    let ancho = 0
+    let alto = 0
+    type Punto = { x: number; y: number; vy: number; vx: number; r: number; a: number; c: string; f: number }
+    let puntos: Punto[] = []
+
+    const armar = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      ancho = window.innerWidth
+      alto = window.innerHeight
+      canvas.width = Math.round(ancho * dpr)
+      canvas.height = Math.round(alto * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      puntos = Array.from({ length: telefono ? 28 : 70 }, () => ({
+        x: Math.random() * ancho,
+        y: Math.random() * alto,
+        vy: -(0.05 + Math.random() * 0.18),
+        vx: (Math.random() - 0.5) * 0.06,
+        r: 0.6 + Math.random() * 1.3,
+        a: 0.08 + Math.random() * 0.22,
+        c: Math.random() < 0.55 ? '#FF8B33' : '#94A3B8',
+        f: Math.random() * Math.PI * 2,
+      }))
+    }
+
+    const cuadro = (t: number) => {
+      if (document.hidden) return
+      ctx.clearRect(0, 0, ancho, alto)
+      for (const p of puntos) {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.y < -5) {
+          p.y = alto + 5
+          p.x = Math.random() * ancho
+        }
+        ctx.globalAlpha = p.a * (0.6 + 0.4 * Math.sin(t / 1600 + p.f))
+        ctx.fillStyle = p.c
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      requestAnimationFrame(cuadro)
+    }
+
+    armar()
+    requestAnimationFrame(cuadro)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) requestAnimationFrame(cuadro)
+    })
+    let espera: number | undefined
+    let anchoArmado = ancho
+    window.addEventListener('resize', () => {
+      clearTimeout(espera)
+      espera = window.setTimeout(() => {
+        if (Math.abs(window.innerWidth - anchoArmado) < 40 && Math.abs(window.innerHeight - alto) < 120) return
+        anchoArmado = window.innerWidth
+        armar()
+      }, 200)
+    })
+  }
+</script>

@@ -2,6 +2,9 @@
 import Base from '../layouts/Base.astro'
 import Nav from '../components/Nav.astro'
 import Hero from '../components/Hero.astro'
+import Cifras from '../components/Cifras.astro'
+import FondoParticulas from '../components/FondoParticulas.astro'
+import CargaIA from '../components/CargaIA.astro'
 import Producto from '../components/Producto.astro'
 import Features from '../components/Features.astro'
 import Funciones from '../components/Funciones.astro'
@@ -21,9 +24,14 @@ import { MOSTRAR_SUSCRIPCION } from '../config'
 ---
 
 <Base>
+  <FondoParticulas />
   <Nav />
   <main id="contenido">
     <Hero />
+    <Cifras />
+    <CargaIA />
+
+    <div class="contenedor"><div class="filete"></div></div>
     <Producto />
 
     <div class="contenedor"><div class="filete"></div></div>

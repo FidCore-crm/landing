@@ -1,0 +1,211 @@
+---
+/**
+ * Fondo de la portada: una red de puntos conectados (fase 2, 13/11/2026).
+ * Reemplaza a la F de partículas, que el PAS descartó por parecerse demasiado
+ * al logo de partículas de adminse.com.ar: «es una copia muy obvia».
+ *
+ * La idea es la cartera conectada en un solo sistema: puntos que se mueven
+ * despacio y se unen con líneas finas cuando están cerca. Algunos son naranjas,
+ * laten como un aviso y de vez en cuando mandan un pulso por una de sus líneas.
+ * Cerca del puntero, los puntos se conectan con él.
+ *
+ * Más densa a la derecha, para no ensuciar el texto. Quieta con «reducir
+ * movimiento»; pausada fuera de pantalla o con la pestaña oculta.
+ */
+---
+
+<canvas data-red-particulas class="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+
+<script>
+  type Nodo = { x: number; y: number; vx: number; vy: number; r: number; naranja: boolean; fase: number }
+  type Pulso = { a: Nodo; b: Nodo; t: number }
+
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-red-particulas]')
+  const ctx = canvas?.getContext('2d')
+  if (canvas && ctx) {
+    const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches
+    let ancho = 0
+    let alto = 0
+    let nodos: Nodo[] = []
+    let pulsos: Pulso[] = []
+    const puntero = { x: -9999, y: -9999 }
+    const DIST = 150
+
+    const armar = () => {
+      const rect = canvas.getBoundingClientRect()
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      ancho = rect.width
+      alto = rect.height
+      canvas.width = Math.round(ancho * dpr)
+      canvas.height = Math.round(alto * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const cantidad = Math.round(Math.min(150, Math.max(45, (ancho * alto) / 8500)))
+      const angosto = ancho < 1024
+      nodos = Array.from({ length: cantidad }, () => {
+        // Sesgo a la derecha en pantallas anchas: el texto queda más limpio.
+        const u = Math.random()
+        const x = angosto ? u * ancho : ancho * (0.18 + 0.82 * Math.pow(u, 0.65))
+        return {
+          x,
+          y: Math.random() * alto,
+          vx: (Math.random() - 0.5) * 0.22,
+          vy: (Math.random() - 0.5) * 0.22,
+          r: 1 + Math.random() * 1.4,
+          naranja: Math.random() < 0.14,
+          fase: Math.random() * Math.PI * 2,
+        }
+      })
+      pulsos = []
+    }
+
+    const dibujar = (t: number) => {
+      ctx.clearRect(0, 0, ancho, alto)
+      for (const n of nodos) {
+        if (!quieto) {
+          n.x += n.vx
+          n.y += n.vy
+          if (n.x < -20) n.x = ancho + 20
+          if (n.x > ancho + 20) n.x = -20
+          if (n.y < -20) n.y = alto + 20
+          if (n.y > alto + 20) n.y = -20
+        }
+      }
+
+      // Líneas entre nodos cercanos.
+      ctx.lineWidth = 1
+      for (let i = 0; i < nodos.length; i++) {
+        const a = nodos[i]
+        for (let j = i + 1; j < nodos.length; j++) {
+          const b = nodos[j]
+          const dx = a.x - b.x
+          const dy = a.y - b.y
+          const d2 = dx * dx + dy * dy
+          if (d2 > DIST * DIST) continue
+          const cerca = 1 - Math.sqrt(d2) / DIST
+          ctx.strokeStyle =
+            a.naranja || b.naranja ? `rgba(255,139,51,${0.22 * cerca})` : `rgba(148,163,184,${0.16 * cerca})`
+          ctx.beginPath()
+          ctx.moveTo(a.x, a.y)
+          ctx.lineTo(b.x, b.y)
+          ctx.stroke()
+          // De vez en cuando, un aviso sale de un nodo naranja por esta línea.
+          if (!quieto && (a.naranja || b.naranja) && pulsos.length < 6 && Math.random() < 0.0009) {
+            pulsos.push(a.naranja ? { a, b, t: 0 } : { a: b, b: a, t: 0 })
+          }
+        }
+        // Conexión con el puntero.
+        const px = a.x - puntero.x
+        const py = a.y - puntero.y
+        const p2 = px * px + py * py
+        if (p2 < 180 * 180) {
+          const cerca = 1 - Math.sqrt(p2) / 180
+          ctx.strokeStyle = `rgba(255,139,51,${0.35 * cerca})`
+          ctx.beginPath()
+          ctx.moveTo(a.x, a.y)
+          ctx.lineTo(puntero.x, puntero.y)
+          ctx.stroke()
+        }
+      }
+
+      // Pulsos viajando.
+      pulsos = pulsos.filter((p) => p.t <= 1)
+      for (const p of pulsos) {
+        p.t += 0.012
+        const x = p.a.x + (p.b.x - p.a.x) * p.t
+        const y = p.a.y + (p.b.y - p.a.y) * p.t
+        const g = ctx.createRadialGradient(x, y, 0, x, y, 7)
+        g.addColorStop(0, 'rgba(255,170,102,0.9)')
+        g.addColorStop(1, 'rgba(255,106,0,0)')
+        ctx.fillStyle = g
+        ctx.beginPath()
+        ctx.arc(x, y, 7, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      // Nodos.
+      for (const n of nodos) {
+        if (n.naranja) {
+          const latido = 0.55 + 0.45 * Math.sin(t / 700 + n.fase)
+          ctx.fillStyle = `rgba(255,106,0,${0.16 * latido})`
+          ctx.beginPath()
+          ctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.fillStyle = `rgba(255,139,51,${0.6 + 0.4 * latido})`
+        } else {
+          ctx.fillStyle = 'rgba(203,213,225,0.45)'
+        }
+        ctx.beginPath()
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
+    }
+
+    armar()
+    if (quieto) {
+      dibujar(0)
+    } else {
+      let visible = true
+      let corriendo = false
+      const cuadro = (t: number) => {
+        if (!visible || document.hidden) {
+          corriendo = false
+          return
+        }
+        dibujar(t)
+        requestAnimationFrame(cuadro)
+      }
+      const arrancar = () => {
+        if (corriendo || !visible || document.hidden) return
+        corriendo = true
+        requestAnimationFrame(cuadro)
+      }
+      new IntersectionObserver((e) => {
+        visible = e[0]?.isIntersecting ?? false
+        arrancar()
+      }).observe(canvas)
+      document.addEventListener('visibilitychange', arrancar)
+      window.addEventListener(
+        'pointermove',
+        (e) => {
+          const rect = canvas.getBoundingClientRect()
+          puntero.x = e.clientX - rect.left
+          puntero.y = e.clientY - rect.top
+        },
+        { passive: true },
+      )
+      document.addEventListener('pointerleave', () => {
+        puntero.x = -9999
+        puntero.y = -9999
+      })
+      // En el teléfono la barra del navegador cambia el alto al desplazarse:
+      // sólo se rearma si cambió el ancho de verdad.
+      let espera: number | undefined
+      let anchoArmado = ancho
+      window.addEventListener('resize', () => {
+        clearTimeout(espera)
+        espera = window.setTimeout(() => {
+          const nuevo = canvas.getBoundingClientRect().width
+          if (Math.abs(nuevo - anchoArmado) < 40) return
+          anchoArmado = nuevo
+          armar()
+        }, 200)
+      })
+      arrancar()
+    }
+  }
+</script>
+
+<style>
+  /* Más tenue sobre el texto: la red se lee a la derecha, donde no hay letra. */
+  canvas {
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.35) 38%, #000 62%);
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.35) 38%, #000 62%);
+  }
+  @media (max-width: 1023px) {
+    canvas {
+      -webkit-mask-image: none;
+      mask-image: none;
+      opacity: 0.45;
+    }
+  }
+</style>

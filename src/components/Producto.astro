@@ -44,35 +44,35 @@ import { Icon } from 'astro-icon/components'
  */
 
 const pantallas = [
-  { archivo: '01-dashboard',     titulo: 'Dashboard',              texto: 'Lo que vence hoy, lo que falta hacer y lo que quedó anotado.' },
-  { archivo: '02-analisis',      titulo: 'Análisis de cartera',    texto: 'Diez gráficos sobre tu histórico: por compañía, ramo, cobertura y medio de pago.' },
-  { archivo: '03-polizas',       titulo: 'Pólizas',                texto: 'Tu cartera entera, con el bien asegurado y los días que faltan para vencer.' },
-  { archivo: '04-poliza',        titulo: 'La póliza por dentro',   texto: 'Asegurado, coberturas contratadas y todo lo que podés hacer desde acá.' },
-  { archivo: '05-renovar-pdf',   titulo: 'Renovar desde el PDF',   texto: 'Subís la renovación que mandó la compañía y la IA compara qué cambió.' },
-  { archivo: '06-importador',    titulo: 'Importar la cartera',    texto: 'Tus planillas y PDF entran solos. El sistema te avisa de lo que duda.' },
-  { archivo: '07-renovaciones',  titulo: 'Renovaciones',           texto: 'Qué vence y cuándo, ordenado por urgencia. La renovada queda encadenada a la anterior.' },
-  { archivo: '08-cliente',       titulo: 'Ficha del cliente',      texto: 'Sus pólizas, sus siniestros, sus tareas y su portal. Todo su recorrido en un lugar.' },
-  { archivo: '09-siniestro',     titulo: 'Siniestro',              texto: 'Bitácora de seguimiento con lo que ve el asegurado y lo que queda interno.' },
-  { archivo: '10-tablero',       titulo: 'Tablero comercial',      texto: 'Lo que todavía no es póliza, moviéndose entre columnas.' },
-  { archivo: '11-lead',          titulo: 'Ficha del lead',         texto: 'El historial de lo que hablaste, con sus cotizaciones adentro.' },
-  { archivo: '12-cotizacion',    titulo: 'Cotización',             texto: 'Varias compañías comparadas lado a lado. Sale en PDF o por WhatsApp.' },
-  { archivo: '13-tareas',        titulo: 'Tareas',                 texto: 'Con prioridad y vencimiento. Las que se repiten se recrean solas.' },
-  { archivo: '14-calendario',    titulo: 'Calendario',             texto: 'Vencimientos, cupones y tareas en el mismo mes.' },
-  { archivo: '15-facturacion',   titulo: 'Facturación',            texto: 'Lo que facturaste por compañía, mes a mes.' },
-  { archivo: '16-correos',       titulo: 'Avisos automáticos',     texto: 'Cada correo que sale solo, con su interruptor. Vos decidís cuáles.' },
-  { archivo: '17-configuracion', titulo: 'Configuración',          texto: 'Quince secciones: tu marca, tus catálogos, tus usuarios, tus backups.' },
-  { archivo: '18-portal',        titulo: 'Portal del asegurado',   texto: 'Lo que ve tu cliente: sus pólizas y sus papeles. Entra con un link, sin contraseña.' },
-  { archivo: '19-denuncia',      titulo: 'Denuncia de siniestro',  texto: 'Tu cliente denuncia desde el portal, con sus datos ya cargados. El caso te entra al CRM.' },
+  { archivo: '01-dashboard', titulo: 'Panel principal', texto: 'Vencimientos del día, tareas pendientes y siniestros sin movimiento, en una sola pantalla.' },
+  { archivo: '02-analisis', titulo: 'Análisis de cartera', texto: 'Composición por compañía, ramo, cobertura y medio de pago, con su evolución.' },
+  { archivo: '03-polizas', titulo: 'Pólizas', texto: 'La cartera completa, con el bien asegurado y los días hasta el vencimiento.' },
+  { archivo: '04-poliza', titulo: 'Ficha de la póliza', texto: 'Asegurado, coberturas, endosos y documentación, con todas las acciones disponibles.' },
+  { archivo: '05-renovar-pdf', titulo: 'Renovación desde el PDF', texto: 'La inteligencia artificial compara la renovación de la compañía con la póliza vigente y señala qué cambió.' },
+  { archivo: '06-importador', titulo: 'Importación de cartera', texto: 'Planillas y PDF se incorporan en forma masiva; el sistema señala los datos a revisar.' },
+  { archivo: '07-renovaciones', titulo: 'Renovaciones', texto: 'Los vencimientos ordenados por urgencia; cada renovación queda vinculada a la póliza anterior.' },
+  { archivo: '08-cliente', titulo: 'Ficha del cliente', texto: 'Pólizas, siniestros, tareas y acceso al portal de cada asegurado.' },
+  { archivo: '09-siniestro', titulo: 'Siniestro', texto: 'Bitácora de seguimiento, con la información para el asegurado separada de la interna.' },
+  { archivo: '10-tablero', titulo: 'Tablero comercial', texto: 'Leads y oportunidades organizados por etapa.' },
+  { archivo: '11-lead', titulo: 'Ficha del lead', texto: 'El historial de contacto y las cotizaciones de cada prospecto.' },
+  { archivo: '12-cotizacion', titulo: 'Cotización', texto: 'Compañías comparadas lado a lado, con envío en PDF o por WhatsApp.' },
+  { archivo: '13-tareas', titulo: 'Tareas', texto: 'Prioridad, vencimiento y tareas recurrentes.' },
+  { archivo: '14-calendario', titulo: 'Calendario', texto: 'Vencimientos, cupones de pago y tareas en una vista mensual.' },
+  { archivo: '15-facturacion', titulo: 'Facturación', texto: 'Lo facturado por compañía, mes a mes.' },
+  { archivo: '16-correos', titulo: 'Avisos automáticos', texto: 'Los correos que envía el sistema, cada uno con su activación.' },
+  { archivo: '17-configuracion', titulo: 'Configuración', texto: 'Marca, catálogos, usuarios y backups.' },
+  { archivo: '18-portal', titulo: 'Portal del asegurado', texto: 'El asegurado consulta sus pólizas y su documentación con un enlace, sin contraseña.' },
+  { archivo: '19-denuncia', titulo: 'Denuncia de siniestro', texto: 'El asegurado denuncia desde el portal con sus datos precargados, y el caso ingresa al sistema.' },
 ]
 ---
 
 <section id="producto" class="seccion seccion-carrusel">
   <div class="contenedor">
     <div class="max-w-3xl">
-      <h2 class="titulo-seccion revelar">Así se ve trabajando.</h2>
+      <h2 class="titulo-seccion revelar">El sistema por dentro.</h2>
       <p class="bajada mt-5 revelar" style="transition-delay: 80ms">
-        Diecinueve pantallas del sistema real, desde tu cartera hasta lo que ve tu cliente.
-        Los datos son de ejemplo; el sistema es el que vas a usar.
+        Diecinueve pantallas del sistema real: la cartera, las renovaciones, los siniestros y lo
+        que ve el asegurado. Los datos son de ejemplo.
       </p>
     </div>
 

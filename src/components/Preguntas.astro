@@ -8,35 +8,39 @@ import { Icon } from 'astro-icon/components'
 
 const preguntas = [
   {
-    p: '¿Dónde quedan mis datos?',
-    r: 'En un servidor dedicado para tu estudio, no compartido con otros productores. Se hace un backup completo todos los días, que se guarda además en una cuenta de Google Drive que es tuya: el sistema sólo accede a los archivos que crea él, nunca al resto de esa cuenta. Si te das de baja, te entregamos un respaldo con toda tu información.',
+    p: '¿Qué es FidCore?',
+    r: 'Es un sistema de gestión para productores asesores de seguros. Reúne la cartera de clientes y pólizas, las renovaciones, los siniestros, la gestión comercial y las comisiones, con carga de pólizas por inteligencia artificial y un portal para los asegurados.',
   },
   {
-    p: '¿Me pasan la cartera que ya tengo cargada?',
-    r: 'Sí, y sin cargo. Nos mandás tus planillas de Excel o las pólizas en PDF y las subimos nosotros antes de que empieces a usarlo. No tenés que cargar nada a mano para arrancar.',
+    p: '¿Dónde se guarda la información?',
+    r: 'En un servidor propio para cada productor, no compartido con otros. Todos los días se hace una copia de seguridad completa, que además se guarda en una cuenta de Google Drive que es tuya: el sistema sólo accede a los archivos que crea él. Si das de baja el servicio, la instalación se elimina y la copia de seguridad queda en tu cuenta de Google Drive.',
   },
   {
-    p: '¿Estoy obligado a usar la inteligencia artificial?',
-    r: 'No. Todo lo que la IA hace se puede hacer a mano, y el formulario de carga manual está siempre disponible. La IA te ahorra tipeo, no te cambia la forma de trabajar.',
+    p: '¿Puedo incorporar mi cartera actual?',
+    r: 'Sí, sin cargo. Nos enviás tus planillas o las pólizas en PDF y las incorporamos antes de que empieces a usar el sistema.',
   },
   {
-    p: '¿Necesito instalar algo en mi computadora?',
-    r: 'No. Entrás desde el navegador, igual que a un homebanking. Funciona en la computadora del estudio y en el celular.',
+    p: '¿Es obligatorio usar la inteligencia artificial?',
+    r: 'No. Todo lo que hace la inteligencia artificial también puede hacerse en forma manual.',
   },
   {
-    p: '¿Puedo darle acceso a alguien de mi equipo?',
-    r: 'Sí. Creás usuarios con distintos permisos, así un empleado ve lo que necesita para trabajar y no toda la información del estudio.',
+    p: '¿Hay que instalar algo?',
+    r: 'No. Se accede desde el navegador, en la computadora o en el teléfono.',
   },
   {
-    p: '¿Cuánto tarda en estar andando?',
-    r: 'Dentro de las 48 horas de la contratación lo tenés operativo, con tu logo y las compañías con las que trabajás ya configuradas.',
+    p: '¿Puedo sumar a mi equipo?',
+    r: 'Sí. Cada usuario tiene sus propios permisos y accede sólo a la información que necesita.',
+  },
+  {
+    p: '¿Cuánto tarda la puesta en marcha?',
+    r: 'El sistema queda operativo dentro de las 48 horas de la contratación, con tu logo y las compañías con las que trabajás ya configuradas.',
   },
 ]
 ---
 
 <section id="preguntas" class="seccion">
   <div class="contenedor">
-    <h2 class="titulo-seccion max-w-2xl revelar">Lo que te vas a preguntar.</h2>
+    <h2 class="titulo-seccion max-w-2xl revelar">Preguntas frecuentes.</h2>
 
     <div class="mt-10 grid gap-x-12 gap-y-2 lg:grid-cols-2">
       {

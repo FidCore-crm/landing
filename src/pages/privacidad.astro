@@ -20,7 +20,7 @@ const politicaGoogle = 'https://developers.google.com/terms/api-services-user-da
 
 <Base
   title="Política de privacidad | FidCore"
-  description="Qué datos trata FidCore CRM, para qué, y qué hace con la cuenta de Google Drive donde guarda las copias de seguridad."
+  description="Tratamiento de datos personales en FidCore CRM y uso de Google Drive para las copias de seguridad."
   noindex={true}
 >
   <Nav />
@@ -29,83 +29,97 @@ const politicaGoogle = 'https://developers.google.com/terms/api-services-user-da
       <h1 class="titulo text-d-sm sm:text-d-md">Política de privacidad</h1>
       <p class="mt-4 text-sm text-slate-500">Última actualización: {actualizada}</p>
 
-      <p class="texto-legal mt-8">
-        FidCore CRM es un sistema de gestión para productores asesores de seguros (PAS), que se
-        contrata por suscripción. Esta política explica qué datos trata FidCore, para qué y con
-        quién se comparten.
+      <h2 class="subtitulo-legal">1. Alcance</h2>
+      <p class="texto-legal">
+        Esta Política de Privacidad describe el tratamiento de datos personales que realiza FidCore
+        en la prestación de FidCore CRM (en adelante, «el Sistema»), el sistema de gestión para
+        productores asesores de seguros (en adelante, «el PAS») que se ofrece por suscripción, y en
+        el sitio fidcore.com.ar.
       </p>
 
-      <h2 class="subtitulo-legal">De quién son los datos</h2>
-      <ul class="lista-legal">
-        <li>
-          El PAS carga en el sistema los datos de sus clientes: asegurados, pólizas, siniestros y
-          documentos. Esos datos son del PAS, que decide qué carga y para qué los usa. FidCore los
-          trata sólo para prestarle el servicio, por cuenta de él.
-        </li>
-        <li>
-          FidCore trata además los datos de contacto del PAS que contrata (nombre, correo y
-          teléfono), para administrar la suscripción y darle soporte.
-        </li>
-      </ul>
-
-      <h2 class="subtitulo-legal">Dónde se guardan</h2>
+      <h2 class="subtitulo-legal">2. Titularidad de los datos</h2>
       <p class="texto-legal">
-        Cada estudio funciona en su propio servidor, separado del de otros PAS. Se accede por
-        conexión cifrada, con usuario y contraseña, y con permisos por usuario.
+        Los datos que el PAS incorpora al Sistema sobre sus clientes (asegurados, pólizas, siniestros
+        y documentación) son de su titularidad y responsabilidad. FidCore los trata exclusivamente
+        por cuenta del PAS y con el único fin de prestarle el servicio.
       </p>
 
-      <h2 class="subtitulo-legal">Google Drive (copias de seguridad)</h2>
+      <h2 class="subtitulo-legal">3. Datos del PAS</h2>
       <p class="texto-legal">
-        El sistema guarda una copia de seguridad diaria en una cuenta de Google Drive del estudio.
-        Para eso le pide a Google acceso sólo a los archivos que crea el propio sistema:
+        Para administrar la suscripción y brindar soporte, FidCore trata los datos de contacto del
+        PAS: nombre y apellido, correo electrónico y teléfono.
       </p>
-      <ul class="lista-legal">
-        <li>
-          Crea y administra únicamente la carpeta <code>fidcore-backups</code> y su contenido: la
-          base de datos del estudio y sus documentos.
-        </li>
-        <li>No puede ver, leer ni modificar ningún otro archivo de esa cuenta.</li>
-        <li>La autorización queda guardada sólo en el servidor del estudio.</li>
-        <li>
-          El acceso se usa únicamente para guardar y restaurar las copias de seguridad del estudio.
-          Los datos no se venden ni se comparten con terceros, y no se usan para publicidad ni para
-          entrenar modelos de inteligencia artificial.
-        </li>
-        <li>Las copias se conservan 30 días; los documentos vigentes, mientras sigan en el sistema.</li>
-        <li>
-          El acceso se puede quitar en cualquier momento desde la cuenta de Google: Seguridad → Apps
-          de terceros con acceso a tu cuenta → FidCore. Desde ese momento el sistema deja de subir
-          las copias a Drive.
-        </li>
-      </ul>
+
+      <h2 class="subtitulo-legal">4. Almacenamiento y seguridad</h2>
       <p class="texto-legal">
-        El uso que hace FidCore de la información recibida de las API de Google cumple la
+        Cada PAS dispone de un servidor propio, independiente del de otros clientes. El acceso se
+        realiza mediante conexión cifrada, con usuario y contraseña, y con permisos asignados a cada
+        usuario.
+      </p>
+
+      <h2 class="subtitulo-legal">5. Copias de seguridad en Google Drive</h2>
+      <p class="texto-legal">
+        El Sistema realiza una copia de seguridad diaria y la guarda en una cuenta de Google Drive del
+        PAS. Para ello solicita a Google acceso exclusivamente a los archivos que el propio Sistema
+        crea. En consecuencia:
+      </p>
+      <ol class="lista-legal lista-letras">
+        <li>
+          El Sistema crea y administra únicamente la carpeta <code>fidcore-backups</code> y su
+          contenido: la base de datos y la documentación del PAS.
+        </li>
+        <li>
+          Para mantener la copia al día, consulta la lista de los archivos que creó (nombre, tamaño y
+          fecha) y sube sólo los nuevos o modificados. También consulta el espacio disponible en la
+          cuenta, que informa al PAS en la configuración del Sistema.
+        </li>
+        <li>No puede ver, leer ni modificar ningún otro archivo de la cuenta.</li>
+        <li>La autorización se guarda únicamente en el servidor del PAS.</li>
+        <li>
+          El acceso se utiliza solamente para guardar y restaurar las copias de seguridad. La
+          información no se vende, no se comparte con terceros y no se utiliza con fines publicitarios
+          ni para entrenar modelos de inteligencia artificial.
+        </li>
+        <li>
+          Las copias se conservan durante 30 días: el Sistema elimina de la carpeta las que superan ese
+          plazo, sin pasar por la papelera. La documentación vigente se conserva mientras permanezca en
+          el Sistema.
+        </li>
+        <li>
+          El PAS puede revocar el acceso en cualquier momento desde su cuenta de Google: Seguridad →
+          Apps de terceros con acceso a tu cuenta → FidCore. A partir de ese momento, el Sistema deja
+          de guardar las copias en Google Drive.
+        </li>
+      </ol>
+      <p class="texto-legal">
+        El uso que hace FidCore de la información recibida de las API de Google se ajusta a la
         <a href={politicaGoogle} rel="noopener" class="enlace-legal"
           >Política de Datos del Usuario de los Servicios de API de Google</a
         >, incluidos los requisitos de Uso Limitado.
       </p>
 
-      <h2 class="subtitulo-legal">Lo que FidCore recibe de cada estudio</h2>
+      <h2 class="subtitulo-legal">6. Información técnica del servicio</h2>
       <p class="texto-legal">
-        Para mantener el servicio, cada sistema informa a FidCore datos técnicos: la versión
-        instalada, el estado del servicio, la fecha del último backup y el espacio en disco. No
-        incluye datos de clientes.
+        Para el mantenimiento del servicio, cada instalación informa a FidCore datos técnicos de
+        funcionamiento: versión, estado del servicio, fecha de la última copia de seguridad y espacio
+        en disco. Esta información no incluye datos de los clientes del PAS.
       </p>
 
-      <h2 class="subtitulo-legal">Esta página</h2>
-      <p class="texto-legal">fidcore.com.ar no usa cookies ni herramientas de seguimiento.</p>
+      <h2 class="subtitulo-legal">7. Sitio web</h2>
+      <p class="texto-legal">El sitio fidcore.com.ar no utiliza cookies ni herramientas de seguimiento.</p>
 
-      <h2 class="subtitulo-legal">Baja del servicio</h2>
+      <h2 class="subtitulo-legal">8. Baja del servicio</h2>
       <p class="texto-legal">
-        Si el PAS se da de baja, se le entrega un respaldo con toda su información y se elimina la
-        instalación por completo.
+        Ante la baja del servicio, la instalación del PAS se elimina en su totalidad. Las copias de
+        seguridad guardadas en su cuenta de Google Drive permanecen en ella.
       </p>
 
-      <h2 class="subtitulo-legal">Derechos</h2>
+      <h2 class="subtitulo-legal">9. Derechos de los titulares</h2>
       <p class="texto-legal">
-        El PAS puede pedir acceso, corrección o eliminación de sus datos escribiendo a
-        <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>. Los clientes
-        de un PAS deben dirigirse a su productor, que es quien administra sus datos.
+        El PAS puede ejercer los derechos de acceso, rectificación y supresión de sus datos escribiendo
+        a <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>. Los asegurados
+        y demás personas cuyos datos administra un PAS deben dirigir sus solicitudes a ese PAS,
+        responsable de su tratamiento.
       </p>
       <p class="texto-legal">
         La Agencia de Acceso a la Información Pública, en su carácter de órgano de control de la Ley
@@ -113,12 +127,16 @@ const politicaGoogle = 'https://developers.google.com/terms/api-services-user-da
         en sus derechos por incumplimiento de las normas de protección de datos personales.
       </p>
 
-      <h2 class="subtitulo-legal">Cambios</h2>
-      <p class="texto-legal">Si esta política cambia, se publica en esta página con la nueva fecha.</p>
-
-      <h2 class="subtitulo-legal">Contacto</h2>
+      <h2 class="subtitulo-legal">10. Modificaciones</h2>
       <p class="texto-legal">
-        <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>
+        FidCore puede actualizar esta Política. La versión vigente se publica en esta página, con su
+        fecha de actualización.
+      </p>
+
+      <h2 class="subtitulo-legal">11. Contacto</h2>
+      <p class="texto-legal">
+        Por consultas sobre esta Política:
+        <a href={`mailto:${EMAIL_CONTACTO}`} class="enlace-legal">{EMAIL_CONTACTO}</a>.
       </p>
     </article>
   </main>
@@ -134,6 +152,9 @@ const politicaGoogle = 'https://developers.google.com/terms/api-services-user-da
   }
   .lista-legal {
     @apply mt-4 list-disc space-y-2.5 pl-5 text-base leading-relaxed text-slate-300 marker:text-naranja-500;
+  }
+  .lista-letras {
+    list-style-type: lower-alpha;
   }
   .enlace-legal {
     @apply text-naranja-400 underline underline-offset-4 hover:text-naranja-300;
